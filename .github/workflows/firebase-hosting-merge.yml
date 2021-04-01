@@ -2,7 +2,7 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on merge
-"on":
+'on':
   push:
     branches:
       - main
@@ -20,12 +20,11 @@ jobs:
 
       - name: Download Flutter packages
         run: flutter pub get
-
       - run: flutter build web
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_WHISKIT_WEB }}"
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_WHISKIT_WEB }}'
           channelId: live
           projectId: whiskit-web
         env:
