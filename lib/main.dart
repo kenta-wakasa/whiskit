@@ -35,7 +35,7 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'WHISKIT',
+      title: 'WHISKIT｜ウィスキー選びをもっとおもしろく',
       theme: ThemeData(
           brightness: Brightness.dark,
           scaffoldBackgroundColor: HexColor('000028'),
