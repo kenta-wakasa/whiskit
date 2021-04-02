@@ -52,17 +52,22 @@ class _WhiskyListPageState extends State<WhiskyListPage> {
                                       Image.network(selectedWhisky!.imageUrl),
                                       SizedBox(width: basePadding * 2),
                                       SizedBox(
-                                        width: width / 2,
+                                        width: width * 0.75,
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.stretch,
                                           children: [
-                                            Text(selectedWhisky!.name, style: textTheme.headline6),
+                                            Text(
+                                              selectedWhisky!.name,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: textTheme.headline6,
+                                              maxLines: 1,
+                                            ),
                                             const Divider(color: Colors.white),
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  width: width / 6,
+                                                  width: width / 12,
                                                   child: Text(
                                                     'Age: ${selectedWhisky!.age ?? '-'}',
                                                     overflow: TextOverflow.ellipsis,
@@ -78,7 +83,7 @@ class _WhiskyListPageState extends State<WhiskyListPage> {
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  width: width / 6,
+                                                  width: width / 2,
                                                   child: Text(
                                                     'Style: ${selectedWhisky!.style}',
                                                     overflow: TextOverflow.ellipsis,
@@ -89,30 +94,50 @@ class _WhiskyListPageState extends State<WhiskyListPage> {
                                             ),
                                             const Expanded(child: SizedBox()),
                                             Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              mainAxisAlignment: MainAxisAlignment.start,
                                               children: [
-                                                ElevatedButton(
-                                                  onPressed: selectedWhisky!.rakuten == '-'
-                                                      ? null
-                                                      : () => window.open(selectedWhisky!.rakuten, ''),
-                                                  style: ElevatedButton.styleFrom(
-                                                    primary: Colors.red,
-                                                    onPrimary: Colors.white,
-                                                    shape: const StadiumBorder(),
+                                                SizedBox(
+                                                  height: width / 24,
+                                                  width: width / 8,
+                                                  child: ElevatedButton(
+                                                    onPressed: selectedWhisky!.rakuten == '-'
+                                                        ? null
+                                                        : () => window.open(selectedWhisky!.rakuten, ''),
+                                                    style: ElevatedButton.styleFrom(
+                                                      primary: Colors.red,
+                                                      onPrimary: Colors.white,
+                                                      shape: const StadiumBorder(),
+                                                    ),
+                                                    child: SizedBox(
+                                                      height: width / 40,
+                                                      child: const FittedBox(
+                                                        fit: BoxFit.fitHeight,
+                                                        child: Text('楽天'),
+                                                      ),
+                                                    ),
                                                   ),
-                                                  child: const Text('楽天'),
                                                 ),
                                                 SizedBox(width: basePadding),
-                                                ElevatedButton(
-                                                  onPressed: selectedWhisky!.amazon == '-'
-                                                      ? null
-                                                      : () => window.open(selectedWhisky!.amazon, ''),
-                                                  style: ElevatedButton.styleFrom(
-                                                    primary: Colors.orangeAccent[700],
-                                                    onPrimary: Colors.white,
-                                                    shape: const StadiumBorder(),
+                                                SizedBox(
+                                                  height: width / 24,
+                                                  width: width / 8,
+                                                  child: ElevatedButton(
+                                                    onPressed: selectedWhisky!.amazon == '-'
+                                                        ? null
+                                                        : () => window.open(selectedWhisky!.amazon, ''),
+                                                    style: ElevatedButton.styleFrom(
+                                                      primary: Colors.orangeAccent[700],
+                                                      onPrimary: Colors.white,
+                                                      shape: const StadiumBorder(),
+                                                    ),
+                                                    child: SizedBox(
+                                                      height: width / 40,
+                                                      child: const FittedBox(
+                                                        fit: BoxFit.fitHeight,
+                                                        child: Text('Amazon'),
+                                                      ),
+                                                    ),
                                                   ),
-                                                  child: const Text('Amazon'),
                                                 ),
                                               ],
                                             ),
