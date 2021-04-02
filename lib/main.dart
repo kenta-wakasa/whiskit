@@ -1,9 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:whiskit/user.dart';
+import 'package:whiskit/configure_web.dart';
+import 'package:whiskit/utils/hex_color.dart';
+
+import 'views/whisky_list_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  configureApp();
   runApp(App());
 }
 
@@ -30,18 +34,19 @@ class App extends StatelessWidget {
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(theme: ThemeData(), home: HomePage());
-  }
-}
-
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Text('success'),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => UserRepository.instance.addUsers(const User(id: '123456', name: 'ほげ太郎')),
-      ),
+    return MaterialApp(
+      title: 'WHISKIT',
+      theme: ThemeData(
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: HexColor('000028'),
+          appBarTheme: AppBarTheme(backgroundColor: HexColor('000028')),
+          textTheme: const TextTheme(
+            headline6: TextStyle(fontWeight: FontWeight.bold),
+          )),
+      initialRoute: '/',
+      routes: <String, WidgetBuilder>{
+        '/': (BuildContext context) => const WhiskyListPage(),
+      },
     );
   }
 }
