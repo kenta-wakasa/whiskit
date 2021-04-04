@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../models/whisky.dart';
-
 class WhiskyDetailsPage extends StatelessWidget {
-  const WhiskyDetailsPage({Key? key, required this.whisky}) : super(key: key);
-  final Whisky whisky;
+  const WhiskyDetailsPage({Key? key, required this.whiskyId}) : super(key: key);
+  final String whiskyId;
+  static const route = '/details';
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Image.network(whisky.imageUrl)),
+    return WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        body: Center(child: Text(whiskyId)),
+      ),
     );
   }
 }
