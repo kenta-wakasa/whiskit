@@ -5,14 +5,17 @@ import * as fs from "fs";
 
 /// csv ファイルを Firestore に import
 /// 参考：https://orangelog.site/firebase/firestore-csv-import/
-createCollection("./create/sample.csv", "collection");
+createCollection("./common/sample.csv", "collection");
 addDocument("sample", {
   name: "puipui",
   createdAt: admin.firestore.FieldValue.serverTimestamp(),
 });
 
-/// 追加するサンプル
-async function addDocument(collectionName: string, object: object) {
+/// Collection に Document を追加するサンプル
+async function addDocument(
+  collectionName: string,
+  object: { [key: string]: any }
+) {
   const firestore = admin.firestore();
   const ref = firestore.collection(collectionName);
   try {
@@ -32,7 +35,7 @@ async function addDocument(collectionName: string, object: object) {
 ///  id,      data01,      data02, ...
 ///
 /// id がブランクの場合は自動生成の id が適用される。
-function createCollection(csvFilePath: string, collectionName: string) {
+async function createCollection(csvFilePath: string, collectionName: string) {
   const serviceAccount = require("../service_account.json");
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
