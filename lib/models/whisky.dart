@@ -73,7 +73,13 @@ class WhiskyRepository {
   }
 
   Future<List<Whisky>> fetchWhiskyList() async {
-    final querySnapshot = await _whiskyCollectionRef.get();
-    return querySnapshot.docs.map(Whisky.fromDoc).toList();
+    /// whisky データはキャッシュ優先で読み込む
+    try {
+      final querySnapshot = await _whiskyCollectionRef.get(const GetOptions(source: Source.cache));
+      return querySnapshot.docs.map(Whisky.fromDoc).toList();
+    } on Exception catch (_) {
+      final querySnapshot = await _whiskyCollectionRef.get(const GetOptions(source: Source.server));
+      return querySnapshot.docs.map(Whisky.fromDoc).toList();
+    }
   }
 }
