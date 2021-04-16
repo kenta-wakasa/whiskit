@@ -3,6 +3,16 @@ import * as csvSync from "csv-parse/lib/sync";
 import * as fs from "fs";
 // import serviceAccount from "./service_account.json";
 
+// サービスアカウントの読み込みと初期化
+const serviceAccount = require("../service_account.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://${serviceAccount.projectId}.firebaseio.com",
+});
+
+// .ts の実行
+// npx ts-node [ファイル名]
+
 /// csv ファイルを Firestore に import
 /// 参考：https://orangelog.site/firebase/firestore-csv-import/
 createCollection("./common/sample.csv", "collection");
@@ -36,11 +46,6 @@ async function addDocument(
 ///
 /// id がブランクの場合は自動生成の id が適用される。
 async function createCollection(csvFilePath: string, collectionName: string) {
-  const serviceAccount = require("../service_account.json");
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://${serviceAccount.projectId}.firebaseio.com",
-  });
   const data = fs.readFileSync(csvFilePath); //csvファイルの読み込み
   const responses: any = csvSync(data); //parse csv
   const objects: { [key: string]: any }[] = []; //この配列の中にパースしたcsvの中身をkey-value形式で入れていく。

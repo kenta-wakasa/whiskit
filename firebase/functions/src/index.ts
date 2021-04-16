@@ -1,16 +1,21 @@
-import * as admin from "firebase-admin";
-import * as csvSync from "csv-parse/lib/sync";
-import * as fs from "fs";
+// import * as admin from "firebase-admin";
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
+// npm run build をすると index.js が生成される
+// デプロイは firebase deploy --only functions
+import * as functions from "firebase-functions";
 
-/// console の プロジェクトの設定からダウンロードできる json ファイルを指定
-let serviceAccount = require("./whiskit-web-firebase-adminsdk.json");
+// 公式ref:https://firebase.google.com/docs/functions/firestore-events?hl=ja
+export const triggerSample = functions.firestore
+  .document("MyCollection/{docId}")
+  .onWrite((change, context) => {
+    change.after.ref.set(
+      {
+        name: "kenta",
+      },
+      { merge: true }
+    );
+  });
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://${serviceAccount.projectId}.firebaseio.com",
+export const helloWorld = functions.https.onRequest((request, response) => {
+  response.send("Hello from Firebase!\n\n");
 });
-
-const firestore = admin.firestore();
