@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 @immutable
 class Whisky {
   const Whisky({
-    required this.id,
     required this.imageUrl,
     required this.name,
     required this.amazon,
@@ -13,10 +12,10 @@ class Whisky {
     required this.alcohol,
     required this.country,
     required this.style,
+    required this.ref,
   });
   static Whisky fromDoc(QueryDocumentSnapshot doc) {
     return Whisky(
-      id: doc.data()!['id'] as String,
       imageUrl: doc.data()!['imageUrl'] as String,
       name: doc.data()!['name'] as String,
       amazon: doc.data()!['amazon'] as String,
@@ -25,10 +24,10 @@ class Whisky {
       alcohol: doc.data()!['alcohol'] as int,
       country: doc.data()!['country'] as String,
       style: doc.data()!['style'] as String,
+      ref: doc.reference,
     );
   }
 
-  final String id;
   final String imageUrl;
   final String name;
   final String amazon;
@@ -37,6 +36,7 @@ class Whisky {
   final int alcohol;
   final String country;
   final String style;
+  final DocumentReference ref;
 
   Whisky copyWith({
     String? id,
@@ -48,9 +48,9 @@ class Whisky {
     int? alcohol,
     String? country,
     String? style,
+    DocumentReference? ref,
   }) {
     return Whisky(
-      id: id ?? this.id,
       imageUrl: imageUrl ?? this.imageUrl,
       name: name ?? this.name,
       amazon: amazon ?? this.amazon,
@@ -59,6 +59,7 @@ class Whisky {
       alcohol: alcohol ?? this.alcohol,
       country: country ?? this.country,
       style: style ?? this.style,
+      ref: ref ?? this.ref,
     );
   }
 }
@@ -68,10 +69,7 @@ class WhiskyRepository {
   static WhiskyRepository instance = WhiskyRepository._();
   final _whiskyCollectionRef = FirebaseFirestore.instance.collection('WhiskyCollection');
 
-  Future<void> addWhisky(Whisky whisky) async {
-    await _whiskyCollectionRef.doc(whisky.id).set(<String, dynamic>{'imageUrl': whisky.imageUrl});
-  }
-
+  // TODO(kenta-wakasa):いずれページネーションに対応する必要がある。
   Future<List<Whisky>> fetchWhiskyList() async {
     /// whisky データはキャッシュ優先で読み込む
     try {

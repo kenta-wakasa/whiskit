@@ -35,7 +35,7 @@ class SelectedWhisky extends StatelessWidget {
                 InkWell(
                   onTap: () => Navigator.pushNamed(
                     context,
-                    '${WhiskyDetailsPage.route}/${selectedWhisky.id}',
+                    '${WhiskyDetailsPage.route}/${selectedWhisky.ref.id}',
                   ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: basePadding * 2),

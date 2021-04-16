@@ -32,19 +32,20 @@ class UserController extends ChangeNotifier {
 
   User? get user => _user;
 
-  Future<void> signIn(auth.User? user) async {
-    if (user == null) {
-      _user = User.anonymous();
+  Future<void> signIn(auth.User? authUser) async {
+    if (authUser == null) {
+      _user = null;
     } else {
-      await UserRepository.instance.addUsers(User.fromUser(user));
-      _user = await UserRepository.instance.fetchByUserId(user.uid);
+      _user = User.fromAuthUser(authUser);
+      await UserRepository.instance.addUsers(User.fromAuthUser(authUser));
+      _user = await UserRepository.instance.fetchByRef(_user!.ref);
     }
     notifyListeners();
   }
 
-  Future<void> signOut() async {
-    await _auth.signInAnonymously();
-    _user = User.anonymous();
+  void signOut() {
+    _user = null;
+    _auth.signOut();
     notifyListeners();
   }
 
@@ -56,7 +57,7 @@ class UserController extends ChangeNotifier {
       idToken: googleAuth.idToken,
     );
     await _auth.signInWithCredential(credential);
-    await UserRepository.instance.addUsers(User.fromUser(_auth.currentUser!));
+    await UserRepository.instance.addUsers(User.fromAuthUser(_auth.currentUser!));
     notifyListeners();
   }
 
@@ -64,7 +65,7 @@ class UserController extends ChangeNotifier {
     if (_user == null) {
       return;
     }
-    _user = await user!.updateName(name);
+    _user = await _user!.updateName(name);
     notifyListeners();
   }
 }

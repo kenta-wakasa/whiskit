@@ -14,11 +14,15 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final textTheme = Theme.of(context).textTheme;
-    final userCon = watch(userProvider);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     final maxLength = max(width, height);
     final basePadding = maxLength / 80;
+    final userCon = watch(userProvider);
+    final userIcon = userCon.user == null
+        ? const Icon(Icons.account_circle_rounded)
+        : CircleAvatar(foregroundImage: NetworkImage(userCon.user!.avatarUrl!));
+    final signIn = userCon.user == null ? signInWidget(textTheme, width) : const SizedBox();
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -30,14 +34,7 @@ class HomePage extends ConsumerWidget {
             onTap: userCon.signOut,
             child: Container(
               padding: const EdgeInsets.all(8),
-              child: FittedBox(
-                fit: BoxFit.fill,
-                child: userCon.user?.avatarUrl == null
-                    ? const Icon(Icons.account_circle_rounded)
-                    : CircleAvatar(
-                        foregroundImage: NetworkImage(userCon.user!.avatarUrl!),
-                      ),
-              ),
+              child: FittedBox(fit: BoxFit.fill, child: userIcon),
             ),
           ),
         ],
@@ -49,12 +46,7 @@ class HomePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                !FirebaseAuth.instance.currentUser!.isAnonymous
-                    ? const SizedBox()
-                    : signInWidget(
-                        textTheme,
-                        width,
-                      ),
+                signIn,
                 WhiskyListWidget(
                   basePadding: basePadding,
                   maxLength: maxLength,
