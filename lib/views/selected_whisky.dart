@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '/models/whisky.dart';
 import '/views/whisky_details_page.dart';
@@ -21,8 +22,9 @@ class SelectedWhisky extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: maxLength / 4),
+    final height = maxLength / 4;
+    return SizedBox(
+      height: height,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Stack(
@@ -30,17 +32,23 @@ class SelectedWhisky extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(width: basePadding * 2),
                 InkWell(
                   onTap: () => Navigator.pushNamed(
                     context,
                     '${WhiskyDetailsPage.route}/${selectedWhisky.id}',
                   ),
-                  child: Image.network(
-                    selectedWhisky.imageUrl,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: basePadding * 2),
+                    child: AspectRatio(
+                      aspectRatio: 2 / 5,
+                      child: FadeInImage.memoryNetwork(
+                        fadeInDuration: const Duration(milliseconds: 400),
+                        placeholder: kTransparentImage,
+                        image: selectedWhisky.imageUrl,
+                      ),
+                    ),
                   ),
                 ),
-                SizedBox(width: basePadding * 2),
                 SizedBox(
                   width: maxLength * 0.75,
                   child: Column(
