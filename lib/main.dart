@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore_platform_interface/cloud_firestore_platform_interface.dart';
+// import 'package:cloud_firestore_platform_interface/cloud_firestore_platform_interface.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:whiskit/controllers/user_controller.dart';
-import 'package:whiskit/utils/hex_color.dart';
-import 'package:whiskit/views/whisky_details_page.dart';
 
+import '/utils/hex_color.dart';
+import '/views/whisky_details_page.dart';
 import 'views/home_page.dart';
 
 /// flutter run -d chrome --web-hostname localhost --web-port 5000 --web-renderer html
@@ -18,15 +18,17 @@ Future<void> main() async {
   // Url から # を取り除くための設定
   setUrlStrategy(PathUrlStrategy());
   await Firebase.initializeApp();
+  await FirebaseAuth.instance.userChanges().first;
+
   // キャッシュの有効化
-  await FirebaseFirestore.instance.enablePersistence(const PersistenceSettings(synchronizeTabs: true));
+  await FirebaseFirestore.instance.enablePersistence();
+  // await FirebaseFirestore.instance.enablePersistence(const PersistenceSettings(synchronizeTabs: true));
   runApp(ProviderScope(child: MainPage()));
 }
 
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    context.read(userProvider);
     final backgroundColor = HexColor('000028');
     return MaterialApp(
       title: 'WHISKIT｜ウィスキー選びをもっとおもしろく',

@@ -1,10 +1,11 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '/controllers/user_controller.dart';
-import '/views/sign_in_widget.dart';
+import '/views/sing_in_widget.dart';
 import '/views/whisky_list_widget.dart';
 
 class HomePage extends ConsumerWidget {
@@ -17,7 +18,7 @@ class HomePage extends ConsumerWidget {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     final maxLength = max(width, height);
-    final basePadding = maxLength / 40;
+    final basePadding = maxLength / 80;
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -48,28 +49,17 @@ class HomePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                userCon.user?.id != null
+                !FirebaseAuth.instance.currentUser!.isAnonymous
                     ? const SizedBox()
-                    : ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 320, maxHeight: 200),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'ウィスキーをもっとおもしろく',
-                              style: textTheme.headline5,
-                              maxLines: 1,
-                              textScaleFactor: width < 400 ? 0.8 : 1,
-                            ),
-                            const SizedBox(height: 8),
-                            const Text('まだ飲んだことのないあなたにぴったりのウィスキーがきっと見つかる'),
-                            const SizedBox(height: 32),
-                            SignInWidget(),
-                            const Expanded(child: SizedBox()),
-                          ],
-                        ),
+                    : signInWidget(
+                        textTheme,
+                        width,
                       ),
-                WhiskyListWidget(key: UniqueKey()),
+                WhiskyListWidget(
+                  basePadding: basePadding,
+                  maxLength: maxLength,
+                  textTheme: textTheme,
+                ),
               ],
             ),
           ),

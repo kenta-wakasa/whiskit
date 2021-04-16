@@ -9,14 +9,16 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '/models/user.dart';
 
 final userProvider = ChangeNotifierProvider<UserController>(
-  (ref) => UserController._()..init(),
+  (ref) => UserController._().._init(),
 );
 
 class UserController extends ChangeNotifier {
   UserController._();
 
   /// [user]の切り替わりを監視し続ける
-  void init() => _sub = _auth.authStateChanges().listen(signIn);
+  void _init() {
+    _sub = _auth.authStateChanges().listen(signIn);
+  }
 
   @override
   void dispose() {

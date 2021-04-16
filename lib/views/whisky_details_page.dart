@@ -7,12 +7,8 @@ class WhiskyDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        return true;
-      },
-      child: Scaffold(
-        body: Center(child: Text(whiskyId)),
-      ),
+      onWillPop: () async => true,
+      child: Scaffold(body: Center(child: Text(whiskyId))),
     );
   }
 }
