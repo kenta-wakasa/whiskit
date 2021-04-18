@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '/views/sign_in_button.dart';
+import '/views/utils/sign_in_button.dart';
 
 class SignInWidget extends StatelessWidget {
   @override

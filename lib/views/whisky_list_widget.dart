@@ -3,21 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '/controllers/whisky_controller.dart';
+import '/views/home_page.dart';
 import '/views/selected_whisky.dart';
 
 class WhiskyListWidget extends ConsumerWidget {
-  const WhiskyListWidget({Key? key, required this.basePadding}) : super(key: key);
-
-  final double basePadding;
+  const WhiskyListWidget();
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final controller = watch(whiskyProvider);
     final whiskyList = controller.whiskyList;
     final selectedWhisky = controller.selectedWhisky;
-    final selectedWhiskyWidget = selectedWhisky == null
-        ? const SizedBox()
-        : SelectedWhisky(basePadding: basePadding, selectedWhisky: selectedWhisky);
+    final selectedWhiskyWidget =
+        selectedWhisky == null ? const SizedBox() : SelectedWhisky(selectedWhisky: selectedWhisky);
 
     if (whiskyList == null && selectedWhisky == null) {
       return const SizedBox();
@@ -32,7 +30,7 @@ class WhiskyListWidget extends ConsumerWidget {
           child: Scrollbar(
             child: GridView.builder(
               scrollDirection: Axis.horizontal,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisSpacing: basePadding,
                 mainAxisSpacing: basePadding,
                 crossAxisCount: 2,
