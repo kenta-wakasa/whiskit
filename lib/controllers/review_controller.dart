@@ -12,12 +12,32 @@ final reviewProvider = ChangeNotifierProvider(
 class ReviewController extends ChangeNotifier {
   ReviewController._();
 
-  String? title;
-  String? content;
+  String title = '';
+  String content = '';
   List<HowToDrink> howToDrinkList = <HowToDrink>[];
   List<Aroma> aromaList = <Aroma>[];
-  int? sweet;
-  int? rich;
+  int sweet = 3;
+  int rich = 3;
+
+  void updateSweet(int sweet) {
+    this.sweet = sweet;
+    notifyListeners();
+  }
+
+  void updateRich(int rich) {
+    this.rich = rich;
+    notifyListeners();
+  }
+
+  void addHowToDrink(HowToDrink howToDrink) {
+    howToDrinkList.add(howToDrink);
+    notifyListeners();
+  }
+
+  void removeHowToDrink(HowToDrink howToDrink) {
+    howToDrinkList.remove(howToDrink);
+    notifyListeners();
+  }
 
   void addAroma(Aroma aroma) {
     aromaList.add(aroma);
@@ -30,13 +50,7 @@ class ReviewController extends ChangeNotifier {
   }
 
   Future<void> postReview({required User? user, required String whiskyId}) async {
-    if (user == null ||
-        title == null ||
-        content == null ||
-        howToDrinkList.isEmpty ||
-        aromaList.isEmpty ||
-        sweet == null ||
-        rich == null) {
+    if (user == null || title.isEmpty || content.isEmpty || howToDrinkList.isEmpty || aromaList.isEmpty) {
       return;
     }
 
@@ -45,12 +59,12 @@ class ReviewController extends ChangeNotifier {
     final review = Review.create(
       userRef: user.ref,
       ref: ref,
-      title: title!,
-      content: content!,
+      title: title,
+      content: content,
       howToDrink: howToDrinkList,
       aroma: aromaList,
-      sweet: sweet!,
-      rich: rich!,
+      sweet: sweet,
+      rich: rich,
     );
 
     await review.ref.set(<String, dynamic>{

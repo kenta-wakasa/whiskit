@@ -14,6 +14,7 @@ class ReviewPage extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     final textTheme = Theme.of(context).textTheme;
     final controller = watch(reviewProvider);
+
     final hasFruity = controller.aromaList.contains(Aroma.fruity);
     final hasMalty = controller.aromaList.contains(Aroma.malty);
     final hasChoco = controller.aromaList.contains(Aroma.choco);
@@ -21,6 +22,12 @@ class ReviewPage extends ConsumerWidget {
     final hasWoody = controller.aromaList.contains(Aroma.woody);
     final hasSmoky = controller.aromaList.contains(Aroma.smoky);
     final hasVanilla = controller.aromaList.contains(Aroma.vanilla);
+
+    final hasRock = controller.howToDrinkList.contains(HowToDrink.rock);
+    final hasSoda = controller.howToDrinkList.contains(HowToDrink.soda);
+    final hasStraight = controller.howToDrinkList.contains(HowToDrink.straight);
+    final hasWater = controller.howToDrinkList.contains(HowToDrink.water);
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -49,9 +56,76 @@ class ReviewPage extends ConsumerWidget {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 640),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(width: double.infinity),
+                    Row(
+                      children: [
+                        const SizedBox(width: 2),
+                        const Text('飲み方'),
+                        const SizedBox(width: 8),
+                        controller.howToDrinkList.isEmpty
+                            ? Text(
+                                'ひとつ以上選択してください',
+                                style: textTheme.caption,
+                              )
+                            : const SizedBox(),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(children: [
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () => hasRock
+                            ? controller.removeHowToDrink(HowToDrink.rock)
+                            : controller.addHowToDrink(HowToDrink.rock),
+                        onPrimary: hasRock ? Colors.white : Colors.black,
+                        primary: hasRock ? Colors.blue : Colors.white,
+                        text: 'ロック',
+                      ),
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () => hasSoda
+                            ? controller.removeHowToDrink(HowToDrink.soda)
+                            : controller.addHowToDrink(HowToDrink.soda),
+                        onPrimary: hasSoda ? Colors.white : Colors.black,
+                        primary: hasSoda ? Colors.blue : Colors.white,
+                        text: 'ハイボール',
+                      ),
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () => hasStraight
+                            ? controller.removeHowToDrink(HowToDrink.straight)
+                            : controller.addHowToDrink(HowToDrink.straight),
+                        onPrimary: hasStraight ? Colors.white : Colors.black,
+                        primary: hasStraight ? Colors.blue : Colors.white,
+                        text: 'ストレート',
+                      ),
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () => hasWater
+                            ? controller.removeHowToDrink(HowToDrink.water)
+                            : controller.addHowToDrink(HowToDrink.water),
+                        onPrimary: hasWater ? Colors.white : Colors.black,
+                        primary: hasWater ? Colors.blue : Colors.white,
+                        text: '水割り',
+                      ),
+                    ]),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        const SizedBox(width: 2),
+                        const Text('香り'),
+                        const SizedBox(width: 8),
+                        controller.aromaList.isEmpty
+                            ? Text(
+                                'ひとつ以上選択してください',
+                                style: textTheme.caption,
+                              )
+                            : const SizedBox(),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
                     Wrap(children: [
                       EasyButton(
                         padding: 2,
@@ -110,6 +184,47 @@ class ReviewPage extends ConsumerWidget {
                         text: 'ウッディ',
                       ),
                     ]),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        const SizedBox(
+                          width: 72,
+                          child: Text('すっきり'),
+                        ),
+                        Slider(
+                          label: '濃厚さ',
+                          value: controller.rich.toDouble(),
+                          onChanged: (value) => controller.updateRich(value.toInt()),
+                          min: 1,
+                          max: 5,
+                          divisions: 4,
+                        ),
+                        const SizedBox(
+                          width: 72,
+                          child: Text('濃厚'),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const SizedBox(
+                          width: 72,
+                          child: Text('スパイシー'),
+                        ),
+                        Slider(
+                          label: 'あまさ',
+                          value: controller.sweet.toDouble(),
+                          onChanged: (value) => controller.updateSweet(value.toInt()),
+                          min: 1,
+                          max: 5,
+                          divisions: 4,
+                        ),
+                        const SizedBox(
+                          width: 72,
+                          child: Text('あまい'),
+                        ),
+                      ],
+                    ),
                     SizedBox(
                       height: 40,
                       child: TextFormField(
