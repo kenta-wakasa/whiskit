@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '/controllers/review_controller.dart';
+import '/controllers/user_controller.dart';
 import '/models/review.dart';
 import '/views/utils/easy_button.dart';
 
@@ -41,7 +42,15 @@ class ReviewPage extends ConsumerWidget {
             child: EasyButton(
               primary: Colors.white,
               onPrimary: Colors.black,
-              onPressed: () {},
+              onPressed: controller.validate
+                  ? null
+                  : () async {
+                      await controller.postReview(
+                        user: context.read(userProvider).user,
+                        whiskyId: whiskyId,
+                      );
+                      Navigator.of(context).pop();
+                    },
               text: '投稿',
             ),
           ),
@@ -230,6 +239,7 @@ class ReviewPage extends ConsumerWidget {
                       child: TextFormField(
                         maxLines: 1,
                         style: textTheme.headline5,
+                        onChanged: controller.updateTitle,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           focusedBorder: InputBorder.none,
@@ -248,6 +258,7 @@ class ReviewPage extends ConsumerWidget {
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         scrollPadding: const EdgeInsets.all(0),
+                        onChanged: controller.updateContent,
                         decoration: const InputDecoration(
                           isDense: true, // 改行時にも場所を固定したい場合は true にする。
                           border: InputBorder.none,

@@ -11,5 +11,9 @@ service cloud.firestore {
       allow read: if true
     }
 
+    match /WhiskyCollection/{WhiskyId}/WhiskyReview/{ReviewId}{
+      allow read, create, update: if true
+    }
+
   }
 }

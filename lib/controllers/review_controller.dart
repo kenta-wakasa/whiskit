@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:whiskit/models/whisky.dart';
 
 import '/models/review.dart';
 import '/models/user.dart';
+import '/models/whisky.dart';
 
 final reviewProvider = ChangeNotifierProvider(
   (ref) => ReviewController._(),
@@ -12,12 +12,24 @@ final reviewProvider = ChangeNotifierProvider(
 class ReviewController extends ChangeNotifier {
   ReviewController._();
 
-  String title = '';
-  String content = '';
+  String _title = '';
+  String _content = '';
   List<HowToDrink> howToDrinkList = <HowToDrink>[];
   List<Aroma> aromaList = <Aroma>[];
   int sweet = 3;
   int rich = 3;
+
+  bool get validate => _title.isEmpty || _content.isEmpty || howToDrinkList.isEmpty || aromaList.isEmpty;
+
+  void updateTitle(String value) {
+    _title = value;
+    notifyListeners();
+  }
+
+  void updateContent(String value) {
+    _content = value;
+    notifyListeners();
+  }
 
   void updateSweet(int sweet) {
     this.sweet = sweet;
@@ -50,7 +62,7 @@ class ReviewController extends ChangeNotifier {
   }
 
   Future<void> postReview({required User? user, required String whiskyId}) async {
-    if (user == null || title.isEmpty || content.isEmpty || howToDrinkList.isEmpty || aromaList.isEmpty) {
+    if (user == null || validate) {
       return;
     }
 
@@ -59,8 +71,8 @@ class ReviewController extends ChangeNotifier {
     final review = Review.create(
       userRef: user.ref,
       ref: ref,
-      title: title,
-      content: content,
+      title: _title,
+      content: _content,
       howToDrink: howToDrinkList,
       aroma: aromaList,
       sweet: sweet,
