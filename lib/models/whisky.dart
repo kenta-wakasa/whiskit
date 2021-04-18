@@ -67,16 +67,16 @@ class Whisky {
 class WhiskyRepository {
   WhiskyRepository._();
   static WhiskyRepository instance = WhiskyRepository._();
-  final _whiskyCollectionRef = FirebaseFirestore.instance.collection('WhiskyCollection');
+  final collectionRef = FirebaseFirestore.instance.collection('WhiskyCollection');
 
   // TODO(kenta-wakasa):いずれページネーションに対応する必要がある。
   Future<List<Whisky>> fetchWhiskyList() async {
     /// whisky データはキャッシュ優先で読み込む
     try {
-      final querySnapshot = await _whiskyCollectionRef.get(const GetOptions(source: Source.cache));
+      final querySnapshot = await collectionRef.get(const GetOptions(source: Source.cache));
       return querySnapshot.docs.map(Whisky.fromDoc).toList();
     } on Exception catch (_) {
-      final querySnapshot = await _whiskyCollectionRef.get(const GetOptions(source: Source.server));
+      final querySnapshot = await collectionRef.get(const GetOptions(source: Source.server));
       return querySnapshot.docs.map(Whisky.fromDoc).toList();
     }
   }

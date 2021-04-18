@@ -77,7 +77,7 @@ class SelectedWhisky extends StatelessWidget {
                           onPrimary: Colors.white,
                           text: '楽天',
                         ),
-                        SizedBox(width: basePadding),
+                        const SizedBox(width: basePadding),
                         EasyButton(
                           onPressed: selectedWhisky.amazon == '-' ? null : () => window.open(selectedWhisky.amazon, ''),
                           primary: Colors.orangeAccent[700],

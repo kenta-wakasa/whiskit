@@ -17,7 +17,7 @@ class EasyButton extends StatelessWidget {
       height: 24,
       width: 80,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(primary: primary, onPrimary: onPrimary, shape: const StadiumBorder()),
         child: SizedBox(
           height: 16,

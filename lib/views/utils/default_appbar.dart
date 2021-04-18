@@ -7,6 +7,7 @@ import '/views/home_page.dart';
 AppBar defaultAppBar({required BuildContext context}) {
   final textTheme = Theme.of(context).textTheme;
   return AppBar(
+    automaticallyImplyLeading: false,
     elevation: 0,
     title: Row(
       mainAxisAlignment: MainAxisAlignment.start,
