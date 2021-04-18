@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:cloud_firestore_platform_interface/cloud_firestore_platform_interface.dart';
+import 'package:cloud_firestore_platform_interface/cloud_firestore_platform_interface.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +21,7 @@ Future<void> main() async {
   await FirebaseAuth.instance.userChanges().first;
 
   // キャッシュの有効化
-  await FirebaseFirestore.instance.enablePersistence();
-  // await FirebaseFirestore.instance.enablePersistence(const PersistenceSettings(synchronizeTabs: true));
+  await FirebaseFirestore.instance.enablePersistence(const PersistenceSettings(synchronizeTabs: true));
   runApp(ProviderScope(child: MainPage()));
 }
 

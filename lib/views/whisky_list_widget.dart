@@ -6,16 +6,9 @@ import '/controllers/whisky_controller.dart';
 import '/views/selected_whisky.dart';
 
 class WhiskyListWidget extends ConsumerWidget {
-  const WhiskyListWidget({
-    Key? key,
-    required this.basePadding,
-    required this.maxLength,
-    required this.textTheme,
-  }) : super(key: key);
+  const WhiskyListWidget({Key? key, required this.basePadding}) : super(key: key);
 
-  final double maxLength;
   final double basePadding;
-  final TextTheme textTheme;
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -31,15 +24,13 @@ class WhiskyListWidget extends ConsumerWidget {
         selectedWhisky == null
             ? const SizedBox()
             : SelectedWhisky(
-                maxLength: maxLength,
                 basePadding: basePadding,
                 selectedWhisky: selectedWhisky,
-                textTheme: textTheme,
               ),
         const Divider(color: Colors.white),
         SizedBox(
           key: UniqueKey(),
-          height: maxLength / 4,
+          height: MediaQuery.of(context).size.height / 4,
           child: Scrollbar(
             child: GridView.builder(
               scrollDirection: Axis.horizontal,

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,17 +12,17 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final textTheme = Theme.of(context).textTheme;
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
-    final maxLength = max(width, height);
-    final basePadding = maxLength / 80;
+    const basePadding = 8.0;
     final userCon = watch(userProvider);
     final userIcon = userCon.user == null
         ? const Icon(Icons.account_circle_rounded)
         : CircleAvatar(foregroundImage: NetworkImage(userCon.user!.avatarUrl!));
-    final signIn = userCon.user == null ? signInWidget(textTheme, width) : const SizedBox();
+    final signIn = FirebaseAuth.instance.currentUser == null ? SignInWidget() : const SizedBox();
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [Text('WHISKIT', style: textTheme.headline5)],
@@ -33,7 +31,7 @@ class HomePage extends ConsumerWidget {
           InkWell(
             onTap: userCon.signOut,
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(basePadding),
               child: FittedBox(fit: BoxFit.fill, child: userIcon),
             ),
           ),
@@ -42,16 +40,13 @@ class HomePage extends ConsumerWidget {
       body: Scrollbar(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(basePadding),
+            padding: const EdgeInsets.all(basePadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 64),
                 signIn,
-                WhiskyListWidget(
-                  basePadding: basePadding,
-                  maxLength: maxLength,
-                  textTheme: textTheme,
-                ),
+                const WhiskyListWidget(basePadding: basePadding),
               ],
             ),
           ),

@@ -7,24 +7,16 @@ import '/models/whisky.dart';
 import '/views/whisky_details_page.dart';
 
 class SelectedWhisky extends StatelessWidget {
-  const SelectedWhisky({
-    Key? key,
-    required this.maxLength,
-    required this.basePadding,
-    required this.selectedWhisky,
-    required this.textTheme,
-  }) : super(key: key);
+  const SelectedWhisky({required this.basePadding, required this.selectedWhisky});
 
-  final double maxLength;
   final double basePadding;
   final Whisky selectedWhisky;
-  final TextTheme textTheme;
 
   @override
   Widget build(BuildContext context) {
-    final height = maxLength / 4;
+    final textTheme = Theme.of(context).textTheme;
     return SizedBox(
-      height: height,
+      height: 240,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Stack(
@@ -50,7 +42,7 @@ class SelectedWhisky extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: maxLength * 0.75,
+                  width: MediaQuery.of(context).size.width,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
