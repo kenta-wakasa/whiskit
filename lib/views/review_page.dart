@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:whiskit/views/utils/easy_button.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ReviewPage extends StatelessWidget {
+import '/controllers/review_controller.dart';
+import '/models/review.dart';
+import '/views/utils/easy_button.dart';
+
+class ReviewPage extends ConsumerWidget {
   const ReviewPage({required this.whiskyId});
   static const route = '/review';
   final String whiskyId;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ScopedReader watch) {
     final textTheme = Theme.of(context).textTheme;
+    final controller = watch(reviewProvider);
+    final hasFruity = controller.aromaList.contains(Aroma.fruity);
+    final hasMalty = controller.aromaList.contains(Aroma.malty);
+    final hasChoco = controller.aromaList.contains(Aroma.choco);
+    final hasNutty = controller.aromaList.contains(Aroma.nutty);
+    final hasWoody = controller.aromaList.contains(Aroma.woody);
+    final hasSmoky = controller.aromaList.contains(Aroma.smoky);
+    final hasVanilla = controller.aromaList.contains(Aroma.vanilla);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -31,48 +44,109 @@ class ReviewPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Align(
             alignment: Alignment.topCenter,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(width: double.infinity),
-                  SizedBox(
-                    height: 40,
-                    child: TextFormField(
-                      maxLines: 1,
-                      style: textTheme.headline5,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.all(0),
-                        hintText: 'タイトル',
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 640),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(width: double.infinity),
+                    Wrap(children: [
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () =>
+                            hasFruity ? controller.removeAroma(Aroma.fruity) : controller.addAroma(Aroma.fruity),
+                        onPrimary: hasFruity ? Colors.white : Colors.black,
+                        primary: hasFruity ? Colors.blue : Colors.white,
+                        text: 'フルーティ',
+                      ),
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () =>
+                            hasMalty ? controller.removeAroma(Aroma.malty) : controller.addAroma(Aroma.malty),
+                        onPrimary: hasMalty ? Colors.white : Colors.black,
+                        primary: hasMalty ? Colors.blue : Colors.white,
+                        text: 'モルティ',
+                      ),
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () =>
+                            hasSmoky ? controller.removeAroma(Aroma.smoky) : controller.addAroma(Aroma.smoky),
+                        onPrimary: hasSmoky ? Colors.white : Colors.black,
+                        primary: hasSmoky ? Colors.blue : Colors.white,
+                        text: 'スモーキー',
+                      ),
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () =>
+                            hasChoco ? controller.removeAroma(Aroma.choco) : controller.addAroma(Aroma.choco),
+                        onPrimary: hasChoco ? Colors.white : Colors.black,
+                        primary: hasChoco ? Colors.blue : Colors.white,
+                        text: 'チョコ',
+                      ),
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () =>
+                            hasVanilla ? controller.removeAroma(Aroma.vanilla) : controller.addAroma(Aroma.vanilla),
+                        onPrimary: hasVanilla ? Colors.white : Colors.black,
+                        primary: hasVanilla ? Colors.blue : Colors.white,
+                        text: 'バニラ',
+                      ),
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () =>
+                            hasNutty ? controller.removeAroma(Aroma.nutty) : controller.addAroma(Aroma.nutty),
+                        onPrimary: hasNutty ? Colors.white : Colors.black,
+                        primary: hasNutty ? Colors.blue : Colors.white,
+                        text: 'ナッツ',
+                      ),
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () =>
+                            hasWoody ? controller.removeAroma(Aroma.woody) : controller.addAroma(Aroma.woody),
+                        onPrimary: hasWoody ? Colors.white : Colors.black,
+                        primary: hasWoody ? Colors.blue : Colors.white,
+                        text: 'ウッディ',
+                      ),
+                    ]),
+                    SizedBox(
+                      height: 40,
+                      child: TextFormField(
+                        maxLines: 1,
+                        style: textTheme.headline5,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.all(0),
+                          hintText: 'タイトル',
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    height: 400,
-                    child: TextFormField(
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      scrollPadding: const EdgeInsets.all(0),
-                      decoration: const InputDecoration(
-                        isDense: true, // 改行時にも場所を固定したい場合は true にする。
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.all(0),
-                        hintText: '感想を書いてみませんか？',
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      height: 400,
+                      child: TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        scrollPadding: const EdgeInsets.all(0),
+                        decoration: const InputDecoration(
+                          isDense: true, // 改行時にも場所を固定したい場合は true にする。
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.all(0),
+                          hintText: '感想を書いてみませんか？',
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

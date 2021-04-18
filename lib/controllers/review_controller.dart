@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whiskit/models/whisky.dart';
@@ -15,17 +14,27 @@ class ReviewController extends ChangeNotifier {
 
   String? title;
   String? content;
-  List<HowToDrink>? howToDrink;
-  List<Aroma>? aroma;
+  List<HowToDrink> howToDrinkList = <HowToDrink>[];
+  List<Aroma> aromaList = <Aroma>[];
   int? sweet;
   int? rich;
+
+  void addAroma(Aroma aroma) {
+    aromaList.add(aroma);
+    notifyListeners();
+  }
+
+  void removeAroma(Aroma aroma) {
+    aromaList.remove(aroma);
+    notifyListeners();
+  }
 
   Future<void> postReview({required User? user, required String whiskyId}) async {
     if (user == null ||
         title == null ||
         content == null ||
-        howToDrink == null ||
-        aroma == null ||
+        howToDrinkList.isEmpty ||
+        aromaList.isEmpty ||
         sweet == null ||
         rich == null) {
       return;
@@ -38,8 +47,8 @@ class ReviewController extends ChangeNotifier {
       ref: ref,
       title: title!,
       content: content!,
-      howToDrink: howToDrink!,
-      aroma: aroma!,
+      howToDrink: howToDrinkList,
+      aroma: aromaList,
       sweet: sweet!,
       rich: rich!,
     );
