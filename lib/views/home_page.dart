@@ -19,10 +19,8 @@ class HomePage extends ConsumerWidget {
         : CircleAvatar(foregroundImage: NetworkImage(userCon.user!.avatarUrl!));
     final signIn = FirebaseAuth.instance.currentUser == null ? SignInWidget() : const SizedBox();
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.transparent,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [Text('WHISKIT', style: textTheme.headline5)],
@@ -44,7 +42,6 @@ class HomePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 64),
                 signIn,
                 const WhiskyListWidget(basePadding: basePadding),
               ],

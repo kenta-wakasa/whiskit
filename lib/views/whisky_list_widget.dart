@@ -15,28 +15,26 @@ class WhiskyListWidget extends ConsumerWidget {
     final controller = watch(whiskyProvider);
     final whiskyList = controller.whiskyList;
     final selectedWhisky = controller.selectedWhisky;
+    final selectedWhiskyWidget = selectedWhisky == null
+        ? const SizedBox()
+        : SelectedWhisky(basePadding: basePadding, selectedWhisky: selectedWhisky);
+
     if (whiskyList == null && selectedWhisky == null) {
       return const SizedBox();
     }
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        selectedWhisky == null
-            ? const SizedBox()
-            : SelectedWhisky(
-                basePadding: basePadding,
-                selectedWhisky: selectedWhisky,
-              ),
-        const Divider(color: Colors.white),
+        selectedWhiskyWidget,
+        const SizedBox(height: 16),
         SizedBox(
           key: UniqueKey(),
-          height: MediaQuery.of(context).size.height / 4,
+          height: 240,
           child: Scrollbar(
             child: GridView.builder(
               scrollDirection: Axis.horizontal,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisSpacing: basePadding,
-                mainAxisSpacing: basePadding * 2,
+                mainAxisSpacing: basePadding,
                 crossAxisCount: 2,
                 childAspectRatio: 5 / 2,
               ),

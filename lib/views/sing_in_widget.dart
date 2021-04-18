@@ -15,9 +15,9 @@ class SignInWidget extends StatelessWidget {
           Text('ウィスキー選びをもっとおもしろく', style: textTheme.headline5),
           const SizedBox(height: 8),
           const Text('あなたにぴったりのウィスキーがきっと見つかる'),
-          const SizedBox(height: 32),
+          const Spacer(),
           SignInButton(),
-          const Expanded(child: SizedBox()),
+          const Spacer(),
         ],
       ),
     );
