@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '/models/whisky.dart';
-import '/views/home_page.dart';
+import '/views/main_page.dart';
 import '/views/review_page.dart';
 import '/views/utils/easy_button.dart';
 import '/views/whisky_details_page.dart';

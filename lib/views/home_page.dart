@@ -1,41 +1,36 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:whiskit/controllers/user_controller.dart';
+import 'package:whiskit/views/main_page.dart';
 
-import '/views/sing_in_widget.dart';
-import '/views/utils/default_appbar.dart';
-import '/views/whisky_list_widget.dart';
-
-const basePadding = 8.0;
+import '/controllers/user_controller.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
-  static const route = '/';
+  static const route = '/home';
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: defaultAppBar(context: context),
-      body: Scrollbar(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(basePadding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Consumer(builder: (_, watch, __) {
-                  watch(userProvider);
-                  if (FirebaseAuth.instance.currentUser == null) {
-                    return SignInWidget();
-                  }
-                  return const SizedBox();
-                }),
-                const WhiskyListWidget(),
-              ],
-            ),
-          ),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, MainPage.route);
+              },
+              child: Text('WHISKIT', style: textTheme.headline5),
+            )
+          ],
         ),
       ),
+      body: Center(child: Consumer(builder: (_, watch, __) {
+        final user = watch(userProvider).user;
+        final name = user?.name ?? '-';
+        return Text(name);
+      })),
     );
   }
 }

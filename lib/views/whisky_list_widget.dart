@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '/controllers/whisky_controller.dart';
-import '/views/home_page.dart';
+import '/views/main_page.dart';
 import '/views/selected_whisky.dart';
 
 class WhiskyListWidget extends ConsumerWidget {

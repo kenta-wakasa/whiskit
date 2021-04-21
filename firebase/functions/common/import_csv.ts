@@ -13,29 +13,30 @@ admin.initializeApp({
 // .ts の実行
 // npx ts-node [ファイル名]
 
-/// csv ファイルを Firestore に import
-/// 参考：https://orangelog.site/firebase/firestore-csv-import/
-createCollection("./common/sample.csv", "collection");
-addDocument("sample", {
-  name: "puipui",
-  createdAt: admin.firestore.FieldValue.serverTimestamp(),
-});
+// addDocument("sample", {
+//   name: "puipui",
+//   createdAt: admin.firestore.FieldValue.serverTimestamp(),
+// });
 
 /// Collection に Document を追加するサンプル
-async function addDocument(
-  collectionName: string,
-  object: { [key: string]: any }
-) {
-  const firestore = admin.firestore();
-  const ref = firestore.collection(collectionName);
-  try {
-    const ret = await ref.doc().set(object);
-    console.log("success");
-    console.log(ret);
-  } catch (error) {
-    console.log("Failed", error);
-  }
-}
+// async function addDocument(
+//   collectionName: string,
+//   object: { [key: string]: any }
+// ) {
+//   const firestore = admin.firestore();
+//   const ref = firestore.collection(collectionName);
+//   try {
+//     const ret = await ref.doc().set(object);
+//     console.log("success");
+//     console.log(ret);
+//   } catch (error) {
+//     console.log("Failed", error);
+//   }
+// }
+
+/// csv ファイルを Firestore に import
+/// 参考：https://orangelog.site/firebase/firestore-csv-import/
+createCollection("./common/WhiskyCollection.csv", "WhiskyCollection");
 
 /// csv を import して collection を生成する。
 ///
@@ -52,11 +53,22 @@ async function createCollection(csvFilePath: string, collectionName: string) {
 
   /// 一段目から fieldName を取得する
   for (const response of responses) {
-    const object: { [key: string]: any } = {};
-    for (let index = 0; index < responses[0].length; index++) {
-      object[responses[0][index] as string] = response[index];
-    }
-    objects.push(object);
+    // const object: { [key: string]: any } = {};
+    // for (let index = 0; index < responses[0].length; index++) {
+    //   object[responses[0][index] as string] = response[index];
+    // }
+    objects.push({
+      _id: response[0],
+      brand: response[1],
+      name: response[2],
+      style: response[3],
+      alcohol: parseFloat(response[4]),
+      country: response[5],
+      age: parseInt(response[6]),
+      imageUrl: response[7],
+      amazon: response[8],
+      rakuten: response[9],
+    });
   }
 
   /// 一段目はヘッダーのため削除する

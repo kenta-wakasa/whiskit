@@ -7,9 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import '/utils/hex_color.dart';
+import '/views/home_page.dart';
+import '/views/main_page.dart';
 import '/views/review_page.dart';
 import '/views/whisky_details_page.dart';
-import 'views/home_page.dart';
 
 /// flutter run -d chrome --web-hostname localhost --web-port 5000 --web-renderer html
 /// flutter build --web-renderer html でビルドすること
@@ -23,10 +24,10 @@ Future<void> main() async {
 
   // キャッシュの有効化
   await FirebaseFirestore.instance.enablePersistence(const PersistenceSettings(synchronizeTabs: true));
-  runApp(ProviderScope(child: MainPage()));
+  runApp(ProviderScope(child: Main()));
 }
 
-class MainPage extends StatelessWidget {
+class Main extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final backgroundColor = HexColor('000028');
@@ -44,28 +45,35 @@ class MainPage extends StatelessWidget {
           headline6: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      initialRoute: HomePage.route,
+      initialRoute: MainPage.route,
 
       /// 動的なルーティングはここでおこなう
       onGenerateRoute: (settings) {
         if (settings.name!.split('/')[1] == WhiskyDetailsPage.route.substring(1) &&
             settings.name!.split('/').length == 3) {
           final arg = settings.name!.split('/')[2];
-          return MaterialPageRoute<bool>(
+          return MaterialPageRoute<void>(
             settings: settings,
             builder: (context) => WhiskyDetailsPage(whiskyId: arg),
           );
         }
         if (settings.name!.split('/')[1] == ReviewPage.route.substring(1) && settings.name!.split('/').length == 3) {
           final arg = settings.name!.split('/')[2];
-          return MaterialPageRoute<bool>(
+          return MaterialPageRoute<void>(
             settings: settings,
             builder: (context) => ReviewPage(whiskyId: arg),
           );
         }
-        return MaterialPageRoute<bool>(
+
+        if (settings.name!.split('/')[1] == HomePage.route.substring(1)) {
+          return MaterialPageRoute<void>(
+            settings: settings,
+            builder: (context) => const HomePage(),
+          );
+        }
+        return MaterialPageRoute<void>(
           settings: settings,
-          builder: (context) => const HomePage(),
+          builder: (context) => const MainPage(),
         );
       },
     );

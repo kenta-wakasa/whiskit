@@ -14,7 +14,7 @@ class Whisky {
     required this.style,
     required this.ref,
   });
-  static Whisky fromDoc(QueryDocumentSnapshot doc) {
+  static Whisky fromDoc(DocumentSnapshot doc) {
     return Whisky(
       imageUrl: doc.data()!['imageUrl'] as String,
       name: doc.data()!['name'] as String,
@@ -79,5 +79,10 @@ class WhiskyRepository {
       final querySnapshot = await collectionRef.get(const GetOptions(source: Source.server));
       return querySnapshot.docs.map(Whisky.fromDoc).toList();
     }
+  }
+
+  Future<Whisky> fetchWhiskyById(String whiskyId) async {
+    final doc = await collectionRef.doc(whiskyId).get();
+    return Whisky.fromDoc(doc);
   }
 }
