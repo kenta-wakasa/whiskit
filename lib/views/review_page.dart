@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pedantic/pedantic.dart';
 
 import '/controllers/review_controller.dart';
 import '/controllers/user_controller.dart';
@@ -14,7 +15,7 @@ class ReviewPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final textTheme = Theme.of(context).textTheme;
-    final controller = watch(reviewProvider);
+    final controller = watch(reviewProvider(whiskyId));
 
     final hasFruity = controller.aromaList.contains(Aroma.fruity);
     final hasMalty = controller.aromaList.contains(Aroma.malty);
@@ -23,6 +24,7 @@ class ReviewPage extends ConsumerWidget {
     final hasWoody = controller.aromaList.contains(Aroma.woody);
     final hasSmoky = controller.aromaList.contains(Aroma.smoky);
     final hasVanilla = controller.aromaList.contains(Aroma.vanilla);
+    final hasHoney = controller.aromaList.contains(Aroma.honey);
 
     final hasRock = controller.howToDrinkList.contains(HowToDrink.rock);
     final hasSoda = controller.howToDrinkList.contains(HowToDrink.soda);
@@ -45,9 +47,41 @@ class ReviewPage extends ConsumerWidget {
               onPressed: controller.validate
                   ? null
                   : () async {
-                      await controller.postReview(
-                        user: context.read(userProvider).user,
-                        whiskyId: whiskyId,
+                      unawaited(
+                        showDialog<void>(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  SizedBox(
+                                    width: 64,
+                                    height: 64,
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                      await controller.postReview(user: context.read(userProvider).user);
+                      Navigator.of(context).pop();
+                      await showDialog<void>(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: const Text('投稿しました！'),
+                            actions: [
+                              TextButton(
+                                onPressed: Navigator.of(context).pop,
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
                       );
                       Navigator.of(context).pop();
                     },
@@ -192,6 +226,14 @@ class ReviewPage extends ConsumerWidget {
                         primary: hasWoody ? Colors.blue : Colors.white,
                         text: 'ウッディ',
                       ),
+                      EasyButton(
+                        padding: 2,
+                        onPressed: () =>
+                            hasHoney ? controller.removeAroma(Aroma.honey) : controller.addAroma(Aroma.honey),
+                        onPrimary: hasHoney ? Colors.white : Colors.black,
+                        primary: hasHoney ? Colors.blue : Colors.white,
+                        text: 'ハニー',
+                      ),
                     ]),
                     const SizedBox(height: 16),
                     Row(
@@ -240,6 +282,7 @@ class ReviewPage extends ConsumerWidget {
                         maxLines: 1,
                         style: textTheme.headline5,
                         onChanged: controller.updateTitle,
+                        initialValue: controller.title.isEmpty ? null : controller.title,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           focusedBorder: InputBorder.none,
@@ -259,6 +302,7 @@ class ReviewPage extends ConsumerWidget {
                         maxLines: null,
                         scrollPadding: const EdgeInsets.all(0),
                         onChanged: controller.updateContent,
+                        initialValue: controller.content.isEmpty ? null : controller.content,
                         decoration: const InputDecoration(
                           isDense: true, // 改行時にも場所を固定したい場合は true にする。
                           border: InputBorder.none,

@@ -1,33 +1,82 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whiskit/models/whisky_log.dart';
 
 import '/models/review.dart';
 import '/models/user.dart';
 import '/models/whisky.dart';
 
-final reviewProvider = ChangeNotifierProvider(
-  (ref) => ReviewController._(),
+final reviewProvider = ChangeNotifierProvider.family(
+  (ref, String whiskyId) => ReviewController._(whiskyId),
 );
 
 class ReviewController extends ChangeNotifier {
-  ReviewController._();
+  ReviewController._(this.whiskyId);
 
-  String _title = '';
-  String _content = '';
+  final String whiskyId;
+  String title = '';
+  String content = '';
   List<HowToDrink> howToDrinkList = <HowToDrink>[];
   List<Aroma> aromaList = <Aroma>[];
   int sweet = 3;
   int rich = 3;
 
-  bool get validate => _title.isEmpty || _content.isEmpty || howToDrinkList.isEmpty || aromaList.isEmpty;
+  bool get validate => title.isEmpty || content.isEmpty || howToDrinkList.isEmpty || aromaList.isEmpty;
+
+  void reset() {
+    title = '';
+    content = '';
+    howToDrinkList = <HowToDrink>[];
+    aromaList = <Aroma>[];
+    sweet = 3;
+    rich = 3;
+  }
+
+  Future<void> postReview({required User? user}) async {
+    if (user == null || validate) {
+      return;
+    }
+
+    final ref = WhiskyRepository.instance.collectionRef.doc(whiskyId).collection('WhiskyReview').doc(user.ref.id);
+
+    final review = Review.create(
+      userRef: user.ref,
+      ref: ref,
+      title: title,
+      content: content,
+      howToDrink: howToDrinkList,
+      aroma: aromaList,
+      sweet: sweet,
+      rich: rich,
+    );
+
+    final batch = FirebaseFirestore.instance.batch()
+      ..set(review.ref, <String, dynamic>{
+        'userRef': review.userRef,
+        'title': review.title,
+        'content': review.content,
+        'howToDrink': review.howToDrink.map((e) => e.toString().split('.').last).toList(),
+        'aroma': review.aroma.map((e) => e.toString().split('.').last).toList(),
+        'sweet': review.sweet,
+        'rich': review.rich,
+        'createdAt': review.createdAt,
+        'updatedAt': review.updatedAt,
+      })
+      ..set(WhiskyLogRepository.generateDocRef(user: user, whiskyId: whiskyId),
+          <String, dynamic>{'createdAt': Timestamp.now()});
+
+    await batch.commit();
+    reset();
+  }
 
   void updateTitle(String value) {
-    _title = value;
+    title = value;
     notifyListeners();
   }
 
   void updateContent(String value) {
-    _content = value;
+    content = value;
     notifyListeners();
   }
 
@@ -59,36 +108,5 @@ class ReviewController extends ChangeNotifier {
   void removeAroma(Aroma aroma) {
     aromaList.remove(aroma);
     notifyListeners();
-  }
-
-  Future<void> postReview({required User? user, required String whiskyId}) async {
-    if (user == null || validate) {
-      return;
-    }
-
-    final ref = WhiskyRepository.instance.collectionRef.doc(whiskyId).collection('WhiskyReview').doc(user.ref.id);
-
-    final review = Review.create(
-      userRef: user.ref,
-      ref: ref,
-      title: _title,
-      content: _content,
-      howToDrink: howToDrinkList,
-      aroma: aromaList,
-      sweet: sweet,
-      rich: rich,
-    );
-
-    await review.ref.set(<String, dynamic>{
-      'userRef': review.userRef,
-      'title': review.title,
-      'content': review.content,
-      'howToDrink': review.howToDrink.map((e) => e.toString().split('.').last).toList(),
-      'aroma': review.aroma.map((e) => e.toString().split('.').last).toList(),
-      'sweet': review.sweet,
-      'rich': review.rich,
-      'createdAt': review.createdAt,
-      'updatedAt': review.updatedAt,
-    });
   }
 }

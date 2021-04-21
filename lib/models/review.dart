@@ -104,4 +104,4 @@ class ReviewRepository {}
 
 enum HowToDrink { straight, rock, water, soda }
 
-enum Aroma { fruity, malty, smoky, woody, choco, vanilla, nutty }
+enum Aroma { fruity, malty, smoky, woody, choco, vanilla, nutty, honey }

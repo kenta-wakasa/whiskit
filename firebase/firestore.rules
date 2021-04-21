@@ -3,17 +3,28 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /UsersCollection/{UserId}{
-      allow read, write: if true
-      
+      allow read, create, update: if true
+
+      match /WhiskyLog/{WhiskyLogId}{
+        allow read, create, update: if true
+      }
     }
+
+    // match /UsersCollection/{UserId}/WhiskyLog/{WhiskyLogId}{
+    //   allow read, create, update: if true
+    // }
 
     match /WhiskyCollection/{WhiskyId}{
       allow read: if true
+
+      match /WhiskyReview/{ReviewId} {
+        allow read, create, update: if true
+      }
     }
 
-    match /WhiskyCollection/{WhiskyId}/WhiskyReview/{ReviewId}{
-      allow read, create, update: if true
-    }
+    // match /WhiskyCollection/{WhiskyId}/WhiskyReview/{ReviewId}{
+    //   allow read, create, update: if true
+    // }
 
   }
 }
