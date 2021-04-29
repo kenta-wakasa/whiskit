@@ -15,7 +15,7 @@ class User {
     return User._(
       name: authUser.displayName!,
       createdAt: Timestamp.now(),
-      avatarUrl: authUser.photoURL,
+      avatarUrl: authUser.photoURL!,
       ref: UserRepository.instance.collectionRef.doc(authUser.uid),
     );
   }
@@ -31,7 +31,7 @@ class User {
 
   final String name;
   final Timestamp createdAt;
-  final String? avatarUrl;
+  final String avatarUrl;
   final DocumentReference ref;
 
   Future<User> updateName(String name) async {

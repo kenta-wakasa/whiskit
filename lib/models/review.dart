@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:whiskit/models/whisky.dart';
 
 @immutable
 class Review {
@@ -100,7 +101,26 @@ class Review {
   }
 }
 
-class ReviewRepository {}
+class ReviewRepository {
+  ReviewRepository._();
+  static ReviewRepository instance = ReviewRepository._();
+
+  CollectionReference collectionRef({required String whiskyId}) {
+    return WhiskyRepository.instance.collectionRef.doc(whiskyId).collection('WhiskyReview');
+  }
+
+  // TODO: ページング機能が必要
+  Future<List<Review>> fetchReviewList({required String whiskyId}) async {
+    final querySnapshot = await collectionRef(whiskyId: whiskyId).get();
+    return querySnapshot.docs.map(Review.fromDoc).toList();
+  }
+
+  /// 最新一件を取得する
+  Future<Review> fetchFirstReview({required String whiskyId}) async {
+    final querySnapshot = await collectionRef(whiskyId: whiskyId).orderBy('createdAt', descending: true).limit(1).get();
+    return querySnapshot.docs.map(Review.fromDoc).toList().first;
+  }
+}
 
 enum HowToDrink { straight, rock, water, soda }
 

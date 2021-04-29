@@ -1,8 +1,13 @@
 import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:transparent_image/transparent_image.dart';
 
+import 'package:whiskit/controllers/user_controller.dart';
+import 'package:whiskit/models/review.dart';
+
+import '/controllers/review_controller.dart';
 import '/models/whisky.dart';
 import '/views/main_page.dart';
 import '/views/review_page.dart';
@@ -38,7 +43,7 @@ class SelectedWhisky extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: 400,
+                width: 320,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -50,25 +55,42 @@ class SelectedWhisky extends StatelessWidget {
                     ),
                     const Divider(color: Colors.white, height: 8),
                     Text(
-                      'Age: ${selectedWhisky.age ?? '-'}   '
+                      'Age: ${selectedWhisky.age == 0 ? '-' : selectedWhisky.age}   '
                       'Alcohol: ${selectedWhisky.alcohol}   '
                       'Style: ${selectedWhisky.style}',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
-                    const Expanded(child: Placeholder()),
+                    FutureBuilder(
+                      future: context.read(reviewProvider(selectedWhisky.ref.id)).fetchFirstReview(),
+                      builder: (context, AsyncSnapshot<Review> snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        final review = snapshot.data;
+                        if (review == null) {
+                          return const SizedBox();
+                        }
+                        return Text(review.content);
+                      },
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        EasyButton(
-                          onPressed: () => Navigator.pushNamed(
-                            context,
-                            '${ReviewPage.route}/${selectedWhisky.ref.id}',
-                          ),
-                          primary: Colors.white,
-                          onPrimary: Theme.of(context).scaffoldBackgroundColor,
-                          text: '感想を書く',
-                        ),
+                        Consumer(builder: (_, watch, __) {
+                          final user = watch(userProvider).user;
+                          return EasyButton(
+                            onPressed: user == null
+                                ? null
+                                : () => Navigator.pushNamed(
+                                      context,
+                                      '${ReviewPage.route}/${selectedWhisky.ref.id}',
+                                    ),
+                            primary: Colors.white,
+                            onPrimary: Theme.of(context).scaffoldBackgroundColor,
+                            text: '感想を書く',
+                          );
+                        }),
                         const Spacer(),
                         EasyButton(
                           onPressed:

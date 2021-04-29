@@ -13,7 +13,8 @@ import '/views/review_page.dart';
 import '/views/whisky_details_page.dart';
 
 /// flutter run -d chrome --web-hostname localhost --web-port 5000 --web-renderer html
-/// flutter build --web-renderer html でビルドすること
+/// flutter build web --web-renderer html でビルドすること
+/// firebase deploy --only hosting でデプロイ。
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -57,20 +58,24 @@ class Main extends StatelessWidget {
             builder: (context) => WhiskyDetailsPage(whiskyId: arg),
           );
         }
-        if (settings.name!.split('/')[1] == ReviewPage.route.substring(1) && settings.name!.split('/').length == 3) {
-          final arg = settings.name!.split('/')[2];
-          return MaterialPageRoute<void>(
-            settings: settings,
-            builder: (context) => ReviewPage(whiskyId: arg),
-          );
+
+        if (FirebaseAuth.instance.currentUser != null) {
+          if (settings.name!.split('/')[1] == ReviewPage.route.substring(1) && settings.name!.split('/').length == 3) {
+            final arg = settings.name!.split('/')[2];
+            return MaterialPageRoute<void>(
+              settings: settings,
+              builder: (context) => ReviewPage(whiskyId: arg),
+            );
+          }
+
+          if (settings.name!.split('/')[1] == HomePage.route.substring(1)) {
+            return MaterialPageRoute<void>(
+              settings: settings,
+              builder: (context) => const HomePage(),
+            );
+          }
         }
 
-        if (settings.name!.split('/')[1] == HomePage.route.substring(1)) {
-          return MaterialPageRoute<void>(
-            settings: settings,
-            builder: (context) => const HomePage(),
-          );
-        }
         return MaterialPageRoute<void>(
           settings: settings,
           builder: (context) => const MainPage(),

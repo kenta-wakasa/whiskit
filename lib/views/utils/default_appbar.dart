@@ -19,6 +19,8 @@ AppBar defaultAppBar({required BuildContext context}) {
         onTap: () {
           // サインインしていない
           if (context.read(userProvider).user == null) {
+            // TODO: sign in をうながすダイアログを出すなど
+
           }
           // サインインしている
           else {
@@ -35,7 +37,7 @@ AppBar defaultAppBar({required BuildContext context}) {
                 if (user == null) {
                   return const Icon(Icons.account_circle_rounded);
                 }
-                return CircleAvatar(foregroundImage: NetworkImage(user.avatarUrl!));
+                return CircleAvatar(foregroundImage: NetworkImage(user.avatarUrl));
               },
             ),
           ),

@@ -5,7 +5,6 @@ import 'package:whiskit/models/whisky_log.dart';
 
 import '/models/review.dart';
 import '/models/user.dart';
-import '/models/whisky.dart';
 
 final reviewProvider = ChangeNotifierProvider.family(
   (ref, String whiskyId) => ReviewController._(whiskyId),
@@ -33,12 +32,16 @@ class ReviewController extends ChangeNotifier {
     rich = 3;
   }
 
+  Future<Review> fetchFirstReview() async {
+    return ReviewRepository.instance.fetchFirstReview(whiskyId: whiskyId);
+  }
+
   Future<void> postReview({required User? user}) async {
     if (user == null || validate) {
       return;
     }
 
-    final ref = WhiskyRepository.instance.collectionRef.doc(whiskyId).collection('WhiskyReview').doc(user.ref.id);
+    final ref = ReviewRepository.instance.collectionRef(whiskyId: whiskyId).doc(user.ref.id);
 
     final review = Review.create(
       userRef: user.ref,

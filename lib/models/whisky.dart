@@ -20,7 +20,7 @@ class Whisky {
       name: doc.data()!['name'] as String,
       amazon: doc.data()!['amazon'] as String,
       rakuten: doc.data()!['rakuten'] as String,
-      age: doc.data()!['age'] as int?,
+      age: doc.data()!['age'] as int,
       alcohol: doc.data()!['alcohol'] as int,
       country: doc.data()!['country'] as String,
       style: doc.data()!['style'] as String,
@@ -32,7 +32,7 @@ class Whisky {
   final String name;
   final String amazon;
   final String rakuten;
-  final int? age;
+  final int age;
   final int alcohol;
   final String country;
   final String style;
