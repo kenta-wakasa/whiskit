@@ -44,7 +44,7 @@ class ReviewController extends ChangeNotifier {
     final ref = ReviewRepository.instance.collectionRef(whiskyId: whiskyId).doc(user.ref.id);
 
     final review = Review.create(
-      userRef: user.ref,
+      user: user,
       ref: ref,
       title: title,
       content: content,
@@ -56,7 +56,7 @@ class ReviewController extends ChangeNotifier {
 
     final batch = FirebaseFirestore.instance.batch()
       ..set(review.ref, <String, dynamic>{
-        'userRef': review.userRef,
+        'userRef': review.user.ref,
         'title': review.title,
         'content': review.content,
         'howToDrink': review.howToDrink.map((e) => e.toString().split('.').last).toList(),

@@ -13,9 +13,10 @@ import '/views/main_page.dart';
 import '/views/review_page.dart';
 import '/views/utils/easy_button.dart';
 import '/views/whisky_details_page.dart';
+import 'utils/common_widget.dart';
 
 class SelectedWhisky extends StatelessWidget {
-  const SelectedWhisky({required this.selectedWhisky});
+  const SelectedWhisky({Key? key, required this.selectedWhisky}) : super(key: key);
 
   final Whisky selectedWhisky;
 
@@ -61,19 +62,68 @@ class SelectedWhisky extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '新着レビュー',
+                      style: TextStyle(color: Theme.of(context).accentColor),
+                    ),
+                    const SizedBox(height: 2),
                     FutureBuilder(
                       future: context.read(reviewProvider(selectedWhisky.ref.id)).fetchFirstReview(),
                       builder: (context, AsyncSnapshot<Review> snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Center(child: CircularProgressIndicator());
-                        }
-                        final review = snapshot.data;
-                        if (review == null) {
-                          return const SizedBox();
-                        }
-                        return Text(review.content);
+                        final reviewWidget = (snapshot.connectionState == ConnectionState.waiting)
+                            ? Center(child: progressIndicator())
+                            : (snapshot.data == null)
+                            ? const Center(child: Text('レビューはまだありません'))
+                            : Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 32,
+                                      height: 32,
+                                      child: CircleAvatar(
+                                        foregroundImage: NetworkImage(snapshot.data!.user.avatarUrl),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            snapshot.data!.title,
+                                            style: textTheme.bodyText1,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Expanded(child: Text(snapshot.data!.content)),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                        return Expanded(
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                width: 2,
+                                color: Theme.of(context).accentColor.withOpacity(.2),
+                              ),
+                            ),
+                            child: reviewWidget,
+                          ),
+                        );
                       },
                     ),
+                    const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [

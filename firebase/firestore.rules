@@ -10,10 +10,6 @@ service cloud.firestore {
       }
     }
 
-    // match /UsersCollection/{UserId}/WhiskyLog/{WhiskyLogId}{
-    //   allow read, create, update: if true
-    // }
-
     match /WhiskyCollection/{WhiskyId}{
       allow read: if true
 
@@ -21,10 +17,5 @@ service cloud.firestore {
         allow read, create, update: if true
       }
     }
-
-    // match /WhiskyCollection/{WhiskyId}/WhiskyReview/{ReviewId}{
-    //   allow read, create, update: if true
-    // }
-
   }
 }

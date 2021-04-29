@@ -18,13 +18,14 @@ import '/views/whisky_details_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // キャッシュの有効化
+  // await FirebaseFirestore.instance.enablePersistence(const PersistenceSettings(synchronizeTabs: true));
+
   // Url から # を取り除くための設定
   setUrlStrategy(PathUrlStrategy());
   await Firebase.initializeApp();
   await FirebaseAuth.instance.userChanges().first;
 
-  // キャッシュの有効化
-  await FirebaseFirestore.instance.enablePersistence(const PersistenceSettings(synchronizeTabs: true));
   runApp(ProviderScope(child: Main()));
 }
 
@@ -42,9 +43,11 @@ class Main extends StatelessWidget {
           elevation: 0,
         ),
         textTheme: const TextTheme(
+          bodyText1: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           headline5: TextStyle(fontWeight: FontWeight.bold),
           headline6: TextStyle(fontWeight: FontWeight.bold),
         ),
+        accentColor: Colors.blue,
       ),
       initialRoute: MainPage.route,
 

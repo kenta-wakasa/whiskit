@@ -3,10 +3,12 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:whiskit/models/whisky.dart';
 
+import 'user.dart';
+
 @immutable
 class Review {
   const Review._({
-    required this.userRef,
+    required this.user,
     required this.ref,
     required this.title,
     required this.content,
@@ -19,7 +21,7 @@ class Review {
   });
 
   Review.create({
-    required this.userRef,
+    required this.user,
     required this.ref,
     required this.title,
     required this.content,
@@ -30,7 +32,7 @@ class Review {
   })  : createdAt = Timestamp.now(),
         updatedAt = Timestamp.now();
 
-  final DocumentReference userRef;
+  final User user;
   final DocumentReference ref;
   final String title;
   final String content;
@@ -41,9 +43,12 @@ class Review {
   final int sweet;
   final int rich;
 
-  static Review fromDoc(DocumentSnapshot doc) {
+  static Future<Review> fromDoc(DocumentSnapshot doc) async {
+    var howToDrinkStringList = <String>[];
+    var aromaStringList = <String>[];
+
     // 列挙体の list に変換
-    final howToDrinkStringList = doc.data()!['howToDrink'] as List<String>;
+    howToDrinkStringList = List.from(doc.data()!['howToDrink'] as List);
     final howToDrinkEnumList = howToDrinkStringList.map(
       (howToDrinkString) {
         final howToDrinkEnum = EnumToString.fromString(HowToDrink.values, howToDrinkString);
@@ -52,7 +57,7 @@ class Review {
     ).toList();
 
     // 列挙体の list に変換
-    final aromaStringList = doc.data()!['aroma'] as List<String>;
+    aromaStringList = List.from(doc.data()!['aroma'] as List);
     final aromaEnumList = aromaStringList.map(
       (aromaString) {
         final aromaEnum = EnumToString.fromString(Aroma.values, aromaString);
@@ -60,8 +65,12 @@ class Review {
       },
     ).toList();
 
+    final userRef = doc.data()!['userRef'] as DocumentReference;
+    final snapshot = await userRef.get();
+    final user = User.fromDoc(snapshot);
+
     return Review._(
-      userRef: doc.data()!['userRef'] as DocumentReference,
+      user: user,
       ref: doc.reference,
       title: doc.data()!['title'] as String,
       content: doc.data()!['content'] as String,
@@ -75,7 +84,7 @@ class Review {
   }
 
   Review copyWith({
-    DocumentReference? userRef,
+    User? user,
     DocumentReference? ref,
     String? title,
     String? content,
@@ -87,7 +96,7 @@ class Review {
     int? rich,
   }) {
     return Review._(
-      userRef: userRef ?? this.userRef,
+      user: user ?? this.user,
       ref: ref ?? this.ref,
       title: title ?? this.title,
       content: content ?? this.content,
@@ -112,13 +121,13 @@ class ReviewRepository {
   // TODO: ページング機能が必要
   Future<List<Review>> fetchReviewList({required String whiskyId}) async {
     final querySnapshot = await collectionRef(whiskyId: whiskyId).get();
-    return querySnapshot.docs.map(Review.fromDoc).toList();
+    return Future.wait(querySnapshot.docs.map(Review.fromDoc).toList());
   }
 
   /// 最新一件を取得する
   Future<Review> fetchFirstReview({required String whiskyId}) async {
     final querySnapshot = await collectionRef(whiskyId: whiskyId).orderBy('createdAt', descending: true).limit(1).get();
-    return querySnapshot.docs.map(Review.fromDoc).toList().first;
+    return Review.fromDoc(querySnapshot.docs.first);
   }
 }
 

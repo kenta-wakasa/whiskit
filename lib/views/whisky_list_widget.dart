@@ -14,8 +14,12 @@ class WhiskyListWidget extends ConsumerWidget {
     final controller = watch(whiskyProvider);
     final whiskyList = controller.whiskyList;
     final selectedWhisky = controller.selectedWhisky;
-    final selectedWhiskyWidget =
-        selectedWhisky == null ? const SizedBox() : SelectedWhisky(selectedWhisky: selectedWhisky);
+    final selectedWhiskyWidget = selectedWhisky == null
+        ? const SizedBox()
+        : SelectedWhisky(
+            key: Key(selectedWhisky.ref.id),
+            selectedWhisky: selectedWhisky,
+          );
 
     if (whiskyList == null && selectedWhisky == null) {
       return const SizedBox();
