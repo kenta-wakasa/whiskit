@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import 'package:whiskit/controllers/user_controller.dart';
-import 'package:whiskit/models/review.dart';
-
 import '/controllers/review_controller.dart';
+import '/controllers/user_controller.dart';
+import '/models/review.dart';
 import '/models/whisky.dart';
 import '/views/main_page.dart';
 import '/views/review_page.dart';
+import '/views/review_widget.dart';
+import '/views/utils/common_widget.dart';
 import '/views/utils/easy_button.dart';
 import '/views/whisky_details_page.dart';
-import 'utils/common_widget.dart';
 
 class SelectedWhisky extends StatelessWidget {
   const SelectedWhisky({Key? key, required this.selectedWhisky}) : super(key: key);
@@ -75,38 +75,7 @@ class SelectedWhisky extends StatelessWidget {
                             ? Center(child: progressIndicator())
                             : (snapshot.data == null)
                             ? const Center(child: Text('レビューはまだありません'))
-                            : Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 32,
-                                      height: 32,
-                                      child: CircleAvatar(
-                                        foregroundImage: NetworkImage(snapshot.data!.user.avatarUrl),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            snapshot.data!.title,
-                                            style: textTheme.bodyText1,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Expanded(child: Text(snapshot.data!.content)),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
+                            : ReviewWidget(review: snapshot.data!);
 
                         return Expanded(
                           child: Container(
@@ -132,10 +101,7 @@ class SelectedWhisky extends StatelessWidget {
                           return EasyButton(
                             onPressed: user == null
                                 ? null
-                                : () => Navigator.pushNamed(
-                                      context,
-                                      '${ReviewPage.route}/${selectedWhisky.ref.id}',
-                                    ),
+                                : () => Navigator.pushNamed(context, '${ReviewPage.route}/${selectedWhisky.ref.id}'),
                             primary: Colors.white,
                             onPrimary: Theme.of(context).scaffoldBackgroundColor,
                             text: '感想を書く',
