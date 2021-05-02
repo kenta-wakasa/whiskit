@@ -16,21 +16,6 @@ class ReviewPage extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     final textTheme = Theme.of(context).textTheme;
     final controller = watch(reviewProvider(whiskyId));
-
-    final hasFruity = controller.aromaList.contains(Aroma.fruity);
-    final hasMalty = controller.aromaList.contains(Aroma.malty);
-    final hasChoco = controller.aromaList.contains(Aroma.choco);
-    final hasNutty = controller.aromaList.contains(Aroma.nutty);
-    final hasWoody = controller.aromaList.contains(Aroma.woody);
-    final hasSmoky = controller.aromaList.contains(Aroma.smoky);
-    final hasVanilla = controller.aromaList.contains(Aroma.vanilla);
-    final hasHoney = controller.aromaList.contains(Aroma.honey);
-
-    final hasRock = controller.howToDrinkList.contains(HowToDrink.rock);
-    final hasSoda = controller.howToDrinkList.contains(HowToDrink.soda);
-    final hasStraight = controller.howToDrinkList.contains(HowToDrink.straight);
-    final hasWater = controller.howToDrinkList.contains(HowToDrink.water);
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -116,44 +101,9 @@ class ReviewPage extends ConsumerWidget {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Wrap(children: [
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () => hasRock
-                            ? controller.removeHowToDrink(HowToDrink.rock)
-                            : controller.addHowToDrink(HowToDrink.rock),
-                        onPrimary: hasRock ? Colors.white : Colors.black,
-                        primary: hasRock ? Colors.blue : Colors.white,
-                        text: 'ロック',
-                      ),
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () => hasSoda
-                            ? controller.removeHowToDrink(HowToDrink.soda)
-                            : controller.addHowToDrink(HowToDrink.soda),
-                        onPrimary: hasSoda ? Colors.white : Colors.black,
-                        primary: hasSoda ? Colors.blue : Colors.white,
-                        text: 'ハイボール',
-                      ),
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () => hasStraight
-                            ? controller.removeHowToDrink(HowToDrink.straight)
-                            : controller.addHowToDrink(HowToDrink.straight),
-                        onPrimary: hasStraight ? Colors.white : Colors.black,
-                        primary: hasStraight ? Colors.blue : Colors.white,
-                        text: 'ストレート',
-                      ),
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () => hasWater
-                            ? controller.removeHowToDrink(HowToDrink.water)
-                            : controller.addHowToDrink(HowToDrink.water),
-                        onPrimary: hasWater ? Colors.white : Colors.black,
-                        primary: hasWater ? Colors.blue : Colors.white,
-                        text: '水割り',
-                      ),
-                    ]),
+                    Wrap(
+                      children: [for (final howToDrink in HowToDrink.values) howToDrinkButton(howToDrink, controller)],
+                    ),
                     const SizedBox(height: 16),
                     Row(
                       children: [
@@ -169,72 +119,9 @@ class ReviewPage extends ConsumerWidget {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Wrap(children: [
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () =>
-                            hasFruity ? controller.removeAroma(Aroma.fruity) : controller.addAroma(Aroma.fruity),
-                        onPrimary: hasFruity ? Colors.white : Colors.black,
-                        primary: hasFruity ? Colors.blue : Colors.white,
-                        text: 'フルーティ',
-                      ),
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () =>
-                            hasMalty ? controller.removeAroma(Aroma.malty) : controller.addAroma(Aroma.malty),
-                        onPrimary: hasMalty ? Colors.white : Colors.black,
-                        primary: hasMalty ? Colors.blue : Colors.white,
-                        text: 'モルティ',
-                      ),
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () =>
-                            hasSmoky ? controller.removeAroma(Aroma.smoky) : controller.addAroma(Aroma.smoky),
-                        onPrimary: hasSmoky ? Colors.white : Colors.black,
-                        primary: hasSmoky ? Colors.blue : Colors.white,
-                        text: 'スモーキー',
-                      ),
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () =>
-                            hasChoco ? controller.removeAroma(Aroma.choco) : controller.addAroma(Aroma.choco),
-                        onPrimary: hasChoco ? Colors.white : Colors.black,
-                        primary: hasChoco ? Colors.blue : Colors.white,
-                        text: 'チョコ',
-                      ),
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () =>
-                            hasVanilla ? controller.removeAroma(Aroma.vanilla) : controller.addAroma(Aroma.vanilla),
-                        onPrimary: hasVanilla ? Colors.white : Colors.black,
-                        primary: hasVanilla ? Colors.blue : Colors.white,
-                        text: 'バニラ',
-                      ),
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () =>
-                            hasNutty ? controller.removeAroma(Aroma.nutty) : controller.addAroma(Aroma.nutty),
-                        onPrimary: hasNutty ? Colors.white : Colors.black,
-                        primary: hasNutty ? Colors.blue : Colors.white,
-                        text: 'ナッツ',
-                      ),
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () =>
-                            hasWoody ? controller.removeAroma(Aroma.woody) : controller.addAroma(Aroma.woody),
-                        onPrimary: hasWoody ? Colors.white : Colors.black,
-                        primary: hasWoody ? Colors.blue : Colors.white,
-                        text: 'ウッディ',
-                      ),
-                      EasyButton(
-                        padding: 2,
-                        onPressed: () =>
-                            hasHoney ? controller.removeAroma(Aroma.honey) : controller.addAroma(Aroma.honey),
-                        onPrimary: hasHoney ? Colors.white : Colors.black,
-                        primary: hasHoney ? Colors.blue : Colors.white,
-                        text: 'ハニー',
-                      ),
-                    ]),
+                    Wrap(
+                      children: [for (final aroma in Aroma.values) aromaButton(aroma, controller)],
+                    ),
                     const SizedBox(height: 16),
                     Row(
                       children: [
@@ -323,5 +210,62 @@ class ReviewPage extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Widget aromaButton(Aroma aroma, ReviewController controller) {
+    return EasyButton(
+      padding: 2,
+      onPressed: () =>
+          controller.aromaList.contains(aroma) ? controller.removeAroma(aroma) : controller.addAroma(aroma),
+      onPrimary: controller.aromaList.contains(aroma) ? Colors.white : Colors.black,
+      primary: controller.aromaList.contains(aroma) ? Colors.blue : Colors.white,
+      text: aromaText(aroma),
+    );
+  }
+
+  String aromaText(Aroma aroma) {
+    switch (aroma) {
+      case Aroma.choco:
+        return 'チョコ';
+      case Aroma.fruity:
+        return 'フルーティ';
+      case Aroma.honey:
+        return 'ハニー';
+      case Aroma.malty:
+        return 'モルティ';
+      case Aroma.nutty:
+        return 'ナッツ';
+      case Aroma.smoky:
+        return 'スモーキー';
+      case Aroma.vanilla:
+        return 'バニラ';
+      case Aroma.woody:
+        return 'ウッディ';
+    }
+  }
+
+  Widget howToDrinkButton(HowToDrink howToDrink, ReviewController controller) {
+    return EasyButton(
+      padding: 2,
+      onPressed: () => controller.howToDrinkList.contains(howToDrink)
+          ? controller.removeHowToDrink(howToDrink)
+          : controller.addHowToDrink(howToDrink),
+      onPrimary: controller.howToDrinkList.contains(howToDrink) ? Colors.white : Colors.black,
+      primary: controller.howToDrinkList.contains(howToDrink) ? Colors.blue : Colors.white,
+      text: howToDrinkText(howToDrink),
+    );
+  }
+
+  String howToDrinkText(HowToDrink howToDrink) {
+    switch (howToDrink) {
+      case HowToDrink.rock:
+        return 'ロック';
+      case HowToDrink.soda:
+        return 'ハイボール';
+      case HowToDrink.straight:
+        return 'ストレート';
+      case HowToDrink.water:
+        return '水割り';
+    }
   }
 }
