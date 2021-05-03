@@ -15,6 +15,10 @@ service cloud.firestore {
 
       match /WhiskyReview/{ReviewId} {
         allow read, create, update: if true
+
+        match /FavoriteReview/{FavoriteReviewId} {
+          allow write, read: if true
+        }
       }
     }
   }

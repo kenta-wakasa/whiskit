@@ -3,8 +3,9 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:whiskit/controllers/review_controller.dart';
 
-import '/controllers/review_controller.dart';
+import '../controllers/post_review_controller.dart';
 import '/controllers/user_controller.dart';
 import '/models/review.dart';
 import '/models/whisky.dart';
@@ -15,18 +16,23 @@ import '/views/utils/common_widget.dart';
 import '/views/utils/easy_button.dart';
 import '/views/whisky_details_page.dart';
 
-class SelectedWhisky extends StatelessWidget {
+class SelectedWhisky extends StatefulWidget {
   const SelectedWhisky({Key? key, required this.selectedWhisky}) : super(key: key);
 
   final Whisky selectedWhisky;
 
+  @override
+  _SelectedWhiskyState createState() => _SelectedWhiskyState();
+}
+
+class _SelectedWhiskyState extends State<SelectedWhisky> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return InkWell(
       onTap: () => Navigator.pushNamed(
         context,
-        '${WhiskyDetailsPage.route}/${selectedWhisky.ref.id}',
+        '${WhiskyDetailsPage.route}/${widget.selectedWhisky.ref.id}',
       ),
       child: SizedBox(
         height: 240,
@@ -40,7 +46,7 @@ class SelectedWhisky extends StatelessWidget {
                 child: FadeInImage.memoryNetwork(
                   fadeInDuration: const Duration(milliseconds: 400),
                   placeholder: kTransparentImage,
-                  image: selectedWhisky.imageUrl,
+                  image: widget.selectedWhisky.imageUrl,
                 ),
               ),
               SizedBox(
@@ -49,16 +55,16 @@ class SelectedWhisky extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      selectedWhisky.name,
+                      widget.selectedWhisky.name,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.headline6,
                       maxLines: 1,
                     ),
                     const Divider(color: Colors.white, height: 8),
                     Text(
-                      'Age: ${selectedWhisky.age == 0 ? '-' : selectedWhisky.age}   '
-                      'Alcohol: ${selectedWhisky.alcohol}   '
-                      'Style: ${selectedWhisky.style}',
+                      'Age: ${widget.selectedWhisky.age == 0 ? '-' : widget.selectedWhisky.age}   '
+                      'Alcohol: ${widget.selectedWhisky.alcohol}   '
+                      'Style: ${widget.selectedWhisky.style}',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
@@ -69,13 +75,13 @@ class SelectedWhisky extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     FutureBuilder(
-                      future: context.read(reviewProvider(selectedWhisky.ref.id)).fetchFirstReview(),
+                      future: ReviewRepository.instance.fetchFirstReview(whiskyId: widget.selectedWhisky.ref.id),
                       builder: (context, AsyncSnapshot<Review> snapshot) {
                         final reviewWidget = (snapshot.connectionState == ConnectionState.waiting)
                             ? Center(child: progressIndicator())
                             : (snapshot.data == null)
                             ? const Center(child: Text('レビューはまだありません'))
-                            : ReviewWidget(review: snapshot.data!);
+                            : ReviewWidget(initReview: snapshot.data!);
 
                         return Expanded(
                           child: Container(
@@ -101,7 +107,13 @@ class SelectedWhisky extends StatelessWidget {
                           return EasyButton(
                             onPressed: user == null
                                 ? null
-                                : () => Navigator.pushNamed(context, '${ReviewPage.route}/${selectedWhisky.ref.id}'),
+                                : () async {
+                                    await Navigator.pushNamed(
+                                      context,
+                                      '${ReviewPage.route}/${widget.selectedWhisky.ref.id}',
+                                    );
+                                    setState(() {});
+                                  },
                             primary: Colors.white,
                             onPrimary: Theme.of(context).scaffoldBackgroundColor,
                             text: '感想を書く',
@@ -109,15 +121,18 @@ class SelectedWhisky extends StatelessWidget {
                         }),
                         const Spacer(),
                         EasyButton(
-                          onPressed:
-                              selectedWhisky.rakuten == '-' ? null : () => window.open(selectedWhisky.rakuten, ''),
+                          onPressed: widget.selectedWhisky.rakuten == '-'
+                              ? null
+                              : () => window.open(widget.selectedWhisky.rakuten, ''),
                           primary: Colors.red,
                           onPrimary: Colors.white,
                           text: '楽天',
                         ),
                         const SizedBox(width: basePadding),
                         EasyButton(
-                          onPressed: selectedWhisky.amazon == '-' ? null : () => window.open(selectedWhisky.amazon, ''),
+                          onPressed: widget.selectedWhisky.amazon == '-'
+                              ? null
+                              : () => window.open(widget.selectedWhisky.amazon, ''),
                           primary: Colors.orangeAccent[700],
                           onPrimary: Colors.white,
                           text: 'Amazon',

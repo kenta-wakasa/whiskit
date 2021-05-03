@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whiskit/controllers/review_controller.dart';
 
 import '/models/review.dart';
 
-class ReviewWidget extends StatelessWidget {
-  const ReviewWidget({Key? key, required this.review}) : super(key: key);
-  final Review review;
+class ReviewWidget extends ConsumerWidget {
+  const ReviewWidget({Key? key, required this.initReview}) : super(key: key);
+  final Review initReview;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ScopedReader watch) {
     final textTheme = Theme.of(context).textTheme;
+    final controller = watch(reviewProvider(initReview));
+    final review = controller.review;
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Row(
@@ -33,7 +37,25 @@ class ReviewWidget extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
-                Expanded(child: Text(review.content)),
+                Expanded(
+                  child: Text(
+                    review.content,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton.icon(
+                      onPressed: controller.changeFavorite,
+                      icon: controller.exitsFavorite == true
+                          ? const Icon(Icons.favorite_rounded, size: 20)
+                          : const Icon(Icons.favorite_border_rounded, size: 20),
+                      label: Text('${review.favoriteCount}'),
+                    )
+                  ],
+                )
               ],
             ),
           ),

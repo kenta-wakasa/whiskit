@@ -1,0 +1,164 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whiskit/controllers/user_controller.dart';
+import 'package:whiskit/models/whisky_log.dart';
+
+import '/models/review.dart';
+import '/models/user.dart';
+
+final postReviewProvider = ChangeNotifierProvider.autoDispose.family(
+  (ref, String whiskyId) => PostReviewController._(whiskyId, ref.read(userProvider).user),
+);
+
+class PostReviewController extends ChangeNotifier {
+  PostReviewController._(this.whiskyId, this.user) {
+    init();
+  }
+
+  final String whiskyId;
+  final User? user;
+  Review? review;
+  String title = '';
+  String content = '';
+  List<HowToDrink> howToDrinkList = <HowToDrink>[];
+  List<Aroma> aromaList = <Aroma>[];
+  int sweet = 3;
+  int rich = 3;
+
+  bool get validate =>
+      review?.title.isEmpty == true ||
+      review?.content.isEmpty == true ||
+      review?.howToDrinkList.isEmpty == true ||
+      review?.aromaList.isEmpty == true;
+
+  Future<void> init() async {
+    if (user == null) {
+      return;
+    }
+    final review = await ReviewRepository.instance.fetchReviewByWhiskyAndUser(
+      whiskyId: whiskyId,
+      userId: user!.ref.id,
+    );
+    if (review == null) {
+      return;
+    }
+    title = review.title;
+    content = review.content;
+    howToDrinkList = review.howToDrinkList;
+    aromaList = review.aromaList;
+    sweet = review.sweet;
+    rich = review.rich;
+    notifyListeners();
+  }
+
+  Future<void> postReview({required User user}) async {
+    if (validate) {
+      return;
+    }
+
+    final ref = ReviewRepository.instance.docRef(whiskyId: whiskyId, userId: user.ref.id);
+
+    final review = Review.create(
+      user: user,
+      ref: ref,
+      title: title,
+      content: content,
+      howToDrinkList: howToDrinkList,
+      aromaList: aromaList,
+      sweet: sweet,
+      rich: rich,
+    );
+
+    final doc = await ref.get();
+
+    // 二回目以降の投稿の場合
+    if (doc.exists) {
+      final batch = FirebaseFirestore.instance.batch()
+        ..set(
+          review.ref,
+          <String, dynamic>{
+            'userRef': review.user.ref,
+            'title': review.title,
+            'content': review.content,
+            'howToDrink': review.howToDrinkList.map((e) => e.toString().split('.').last).toList(),
+            'aroma': review.aromaList.map((e) => e.toString().split('.').last).toList(),
+            'sweet': review.sweet,
+            'rich': review.rich,
+            'createdAt': review.createdAt,
+          },
+          SetOptions(merge: true),
+        ) // 参考:https://tomokazu-kozuma.com/difference-between-set-and-update-when-updating-cloud-firestore-data/
+        ..set(WhiskyLogRepository.generateDocRef(user: user, whiskyId: whiskyId),
+            <String, dynamic>{'createdAt': Timestamp.now()});
+
+      await batch.commit();
+
+    // 初投稿の場合
+    } else {
+      final batch = FirebaseFirestore.instance.batch()
+        ..set(
+          review.ref,
+          <String, dynamic>{
+            'userRef': review.user.ref,
+            'title': review.title,
+            'content': review.content,
+            'howToDrink': review.howToDrinkList.map((e) => e.toString().split('.').last).toList(),
+            'aroma': review.aromaList.map((e) => e.toString().split('.').last).toList(),
+            'sweet': review.sweet,
+            'rich': review.rich,
+            'createdAt': review.createdAt,
+            'favoriteCount': 0, //初めての投稿の場合は 0 で初期化する
+          },
+          SetOptions(merge: true),
+        ) // 参考:https://tomokazu-kozuma.com/difference-between-set-and-update-when-updating-cloud-firestore-data/
+        ..set(WhiskyLogRepository.generateDocRef(user: user, whiskyId: whiskyId),
+            <String, dynamic>{'createdAt': Timestamp.now()})
+        // 投稿レビューの総数をカウントアップする
+        ..update(UserRepository.instance.collectionRef.doc(user.ref.id),
+            <String, dynamic>{'reviewCount': FieldValue.increment(1)});
+
+      await batch.commit();
+    }
+  }
+
+  void updateTitle(String value) {
+    title = value;
+    notifyListeners();
+  }
+
+  void updateContent(String value) {
+    content = value;
+    notifyListeners();
+  }
+
+  void updateSweet(int sweet) {
+    this.sweet = sweet;
+    notifyListeners();
+  }
+
+  void updateRich(int rich) {
+    this.rich = rich;
+    notifyListeners();
+  }
+
+  void addHowToDrink(HowToDrink howToDrink) {
+    howToDrinkList.add(howToDrink);
+    notifyListeners();
+  }
+
+  void removeHowToDrink(HowToDrink howToDrink) {
+    howToDrinkList.remove(howToDrink);
+    notifyListeners();
+  }
+
+  void addAroma(Aroma aroma) {
+    aromaList.add(aroma);
+    notifyListeners();
+  }
+
+  void removeAroma(Aroma aroma) {
+    aromaList.remove(aroma);
+    notifyListeners();
+  }
+}

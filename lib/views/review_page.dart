@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedantic/pedantic.dart';
 
-import '/controllers/review_controller.dart';
+import '../controllers/post_review_controller.dart';
 import '/controllers/user_controller.dart';
 import '/models/review.dart';
 import '/views/utils/easy_button.dart';
@@ -15,7 +15,7 @@ class ReviewPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final textTheme = Theme.of(context).textTheme;
-    final controller = watch(reviewProvider(whiskyId));
+    final controller = watch(postReviewProvider(whiskyId));
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -29,7 +29,7 @@ class ReviewPage extends ConsumerWidget {
             child: EasyButton(
               primary: Colors.white,
               onPrimary: Colors.black,
-              onPressed: controller.validate
+              onPressed: controller.validate ||  context.read(userProvider).user == null
                   ? null
                   : () async {
                       unawaited(
@@ -52,7 +52,7 @@ class ReviewPage extends ConsumerWidget {
                           },
                         ),
                       );
-                      await controller.postReview(user: context.read(userProvider).user);
+                      await controller.postReview(user: context.read(userProvider).user!);
                       Navigator.of(context).pop();
                       await showDialog<void>(
                         context: context,
@@ -212,7 +212,7 @@ class ReviewPage extends ConsumerWidget {
     );
   }
 
-  Widget aromaButton(Aroma aroma, ReviewController controller) {
+  Widget aromaButton(Aroma aroma, PostReviewController controller) {
     return EasyButton(
       padding: 2,
       onPressed: () =>
@@ -244,7 +244,7 @@ class ReviewPage extends ConsumerWidget {
     }
   }
 
-  Widget howToDrinkButton(HowToDrink howToDrink, ReviewController controller) {
+  Widget howToDrinkButton(HowToDrink howToDrink, PostReviewController controller) {
     return EasyButton(
       padding: 2,
       onPressed: () => controller.howToDrinkList.contains(howToDrink)
