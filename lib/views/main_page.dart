@@ -30,7 +30,7 @@ class MainPage extends StatelessWidget {
                   }
                   return const SizedBox();
                 }),
-                const WhiskyListWidget(),
+                const WhiskyListWidget(key: ValueKey('WhiskyList')),
               ],
             ),
           ),

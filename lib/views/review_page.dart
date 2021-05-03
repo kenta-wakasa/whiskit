@@ -29,7 +29,7 @@ class ReviewPage extends ConsumerWidget {
             child: EasyButton(
               primary: Colors.white,
               onPrimary: Colors.black,
-              onPressed: controller.validate ||  context.read(userProvider).user == null
+              onPressed: controller.validate || context.read(userProvider).user == null
                   ? null
                   : () async {
                       unawaited(
@@ -166,10 +166,11 @@ class ReviewPage extends ConsumerWidget {
                     SizedBox(
                       height: 40,
                       child: TextFormField(
+                        key: const ValueKey('title'),
                         maxLines: 1,
                         style: textTheme.headline5,
                         onChanged: controller.updateTitle,
-                        initialValue: controller.title.isEmpty ? null : controller.title,
+                        initialValue: controller.title,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           focusedBorder: InputBorder.none,
@@ -185,11 +186,12 @@ class ReviewPage extends ConsumerWidget {
                     SizedBox(
                       height: 400,
                       child: TextFormField(
+                        key: const ValueKey('content'),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         scrollPadding: const EdgeInsets.all(0),
                         onChanged: controller.updateContent,
-                        initialValue: controller.content.isEmpty ? null : controller.content,
+                        initialValue: controller.content,
                         decoration: const InputDecoration(
                           isDense: true, // 改行時にも場所を固定したい場合は true にする。
                           border: InputBorder.none,

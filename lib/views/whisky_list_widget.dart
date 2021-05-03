@@ -7,7 +7,7 @@ import '/views/main_page.dart';
 import '/views/selected_whisky.dart';
 
 class WhiskyListWidget extends ConsumerWidget {
-  const WhiskyListWidget();
+  const WhiskyListWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -29,7 +29,7 @@ class WhiskyListWidget extends ConsumerWidget {
         selectedWhiskyWidget,
         const SizedBox(height: 16),
         SizedBox(
-          key: UniqueKey(),
+          key: const ValueKey('WhiskyScroll'),
           height: 240,
           child: Scrollbar(
             child: GridView.builder(

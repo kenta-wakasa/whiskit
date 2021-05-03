@@ -104,6 +104,7 @@ class _SelectedWhiskyState extends State<SelectedWhisky> {
                       children: [
                         Consumer(builder: (_, watch, __) {
                           final user = watch(userProvider).user;
+                          watch(postReviewProvider(widget.selectedWhisky.ref.id));
                           return EasyButton(
                             onPressed: user == null
                                 ? null

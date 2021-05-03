@@ -1,39 +1,43 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/models/review.dart';
 import 'package:whiskit/models/user.dart';
 
 final reviewProvider = ChangeNotifierProvider.autoDispose.family(
-  (ref, Review review) => ReviewController._(review),
+  (ref, Review review) {
+    final user = ref.read(userProvider).user;
+    return ReviewController._(review, user);
+  },
 );
 
 class ReviewController extends ChangeNotifier {
-  ReviewController._(this.review) {
+  ReviewController._(this.review, this.user) {
     init();
   }
 
   Review review;
   bool exitsFavorite = false;
+  final User? user;
 
   Future<void> init() async {
-    if (FirebaseAuth.instance.currentUser == null) {
+    if (user == null) {
       exitsFavorite = false;
+      return;
     }
-    final doc = await review.ref.collection('FavoriteReview').doc(FirebaseAuth.instance.currentUser!.uid).get();
+    final doc = await review.ref.collection('FavoriteReview').doc(user!.ref.id).get();
     exitsFavorite = doc.exists;
     notifyListeners();
   }
 
   void changeFavorite() {
-    if (FirebaseAuth.instance.currentUser == null) {
+    if (user == null) {
       print('required log in');
       return;
     }
 
-    final uid = FirebaseAuth.instance.currentUser!.uid;
-    final userRef = FirebaseFirestore.instance.collection('UsersCollection').doc(uid);
+    final uid = user!.ref.id;
     final favoriteReviewRef = review.ref.collection('FavoriteReview').doc(uid);
 
     // お気に入りを削除する
