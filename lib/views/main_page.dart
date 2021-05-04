@@ -21,7 +21,7 @@ class MainPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(basePadding),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Consumer(builder: (_, watch, __) {
                   watch(userProvider);

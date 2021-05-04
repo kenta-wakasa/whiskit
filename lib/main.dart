@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:whiskit/models/review.dart';
 
 import '/utils/hex_color.dart';
 import '/views/home_page.dart';
@@ -26,6 +27,8 @@ Future<void> main() async {
   await Firebase.initializeApp();
   await FirebaseAuth.instance.userChanges().first;
 
+  final reviewList = await ReviewRepository.instance.fetchLatestReviewList();
+  print(reviewList.length);
   runApp(ProviderScope(child: Main()));
 }
 

@@ -29,7 +29,7 @@ class ReviewPage extends ConsumerWidget {
             child: EasyButton(
               primary: Colors.white,
               onPrimary: Colors.black,
-              onPressed: controller.validate || context.read(userProvider).user == null
+              onPressed: !controller.validate || context.read(userProvider).user == null
                   ? null
                   : () async {
                       unawaited(

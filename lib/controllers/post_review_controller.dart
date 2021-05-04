@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whiskit/controllers/user_controller.dart';
+import 'package:whiskit/models/whisky.dart';
 import 'package:whiskit/models/whisky_log.dart';
 
 import '/models/review.dart';
@@ -26,11 +27,12 @@ class PostReviewController extends ChangeNotifier {
   int sweet = 3;
   int rich = 3;
 
+  /// 投稿のための条件を満たしたとき true になる
   bool get validate =>
-      review?.title.isEmpty == true ||
-      review?.content.isEmpty == true ||
-      review?.howToDrinkList.isEmpty == true ||
-      review?.aromaList.isEmpty == true;
+      title.isNotEmpty == true &&
+      content.isNotEmpty == true &&
+      howToDrinkList.isNotEmpty == true &&
+      aromaList.isNotEmpty == true;
 
   Future<void> init() async {
     if (user == null) {
@@ -53,7 +55,7 @@ class PostReviewController extends ChangeNotifier {
   }
 
   Future<void> postReview({required User user}) async {
-    if (validate) {
+    if (!validate) {
       return;
     }
 
@@ -89,12 +91,12 @@ class PostReviewController extends ChangeNotifier {
           },
           SetOptions(merge: true),
         ) // 参考:https://tomokazu-kozuma.com/difference-between-set-and-update-when-updating-cloud-firestore-data/
-        ..set(WhiskyLogRepository.generateDocRef(user: user, whiskyId: whiskyId),
-            <String, dynamic>{'createdAt': Timestamp.now()});
-
+        ..set(
+          WhiskyLogRepository.generateDocRef(user: user, whiskyId: whiskyId),
+          <String, dynamic>{'createdAt': Timestamp.now()},
+        );
       await batch.commit();
-
-    // 初投稿の場合
+      // 初投稿の場合
     } else {
       final batch = FirebaseFirestore.instance.batch()
         ..set(
@@ -112,14 +114,36 @@ class PostReviewController extends ChangeNotifier {
           },
           SetOptions(merge: true),
         ) // 参考:https://tomokazu-kozuma.com/difference-between-set-and-update-when-updating-cloud-firestore-data/
-        ..set(WhiskyLogRepository.generateDocRef(user: user, whiskyId: whiskyId),
-            <String, dynamic>{'createdAt': Timestamp.now()})
-        // 投稿レビューの総数をカウントアップする
-        ..update(UserRepository.instance.collectionRef.doc(user.ref.id),
-            <String, dynamic>{'reviewCount': FieldValue.increment(1)});
+        ..set(
+          WhiskyLogRepository.generateDocRef(user: user, whiskyId: whiskyId),
+          <String, dynamic>{'createdAt': Timestamp.now()},
+        )
+        // ユーザーの投稿レビューの総数をカウントアップする
+        ..update(
+          UserRepository.instance.collectionRef.doc(user.ref.id),
+          <String, dynamic>{'reviewCount': FieldValue.increment(1)},
+        )
+        // ウィスキーの投稿レビューの総数をカウントアップする
+        ..set(
+          review.ref.parent.parent!,
+          <String, dynamic>{'reviewCount': FieldValue.increment(1)},
+          SetOptions(merge: true),
+        );
 
       await batch.commit();
     }
+
+    // 平均値を更新する
+    final whiskySnapshot = await review.ref.parent.parent!.get();
+    final whiskyReviewCount = whiskySnapshot.data()!['reviewCount'] as int;
+
+    final oldSweetAverage = whiskySnapshot.data()!['sweetAverage'] as int? ?? 0;
+    final newSweetAverage = (((whiskyReviewCount - 1) * oldSweetAverage) + sweet) / whiskyReviewCount;
+    print('sweetAverage $newSweetAverage');
+
+    final oldRichAverage = whiskySnapshot.data()!['richAverage'] as int? ?? 0;
+    final newRichAverage = (((whiskyReviewCount - 1) * oldRichAverage) + rich) / whiskyReviewCount;
+    print('richAverage $newRichAverage');
   }
 
   void updateTitle(String value) {

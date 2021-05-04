@@ -10,8 +10,13 @@ service cloud.firestore {
       }
     }
 
-    match /WhiskyCollection/{WhiskyId}{
+    // コレクショングループでのルールの書き方。
+    match /{path=**}/WhiskyReview/{WhiskyReviewId} {
       allow read: if true
+    }
+
+    match /WhiskyCollection/{WhiskyId}{
+      allow read, update: if true
 
       match /WhiskyReview/{ReviewId} {
         allow read, create, update: if true

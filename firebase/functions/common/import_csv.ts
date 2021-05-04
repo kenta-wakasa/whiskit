@@ -82,12 +82,18 @@ async function createCollection(csvFilePath: string, collectionName: string) {
         if (object["_id"] != "") {
           let id = object["_id"];
           delete object._id;
-          transaction.set(firestore.collection(collectionName).doc(id), object);
+          transaction.set(
+            firestore.collection(collectionName).doc(id),
+            object,
+            { merge: true }
+          );
         }
         // _id がからの場合は id を生成する
         else {
           delete object._id;
-          transaction.set(firestore.collection(collectionName).doc(), object);
+          transaction.set(firestore.collection(collectionName).doc(), object, {
+            merge: true,
+          });
         }
       }
       console.log("success");

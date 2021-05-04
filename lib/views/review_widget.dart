@@ -40,8 +40,6 @@ class ReviewWidget extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     review.content,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Row(

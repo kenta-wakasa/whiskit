@@ -13,8 +13,6 @@ class SignInWidget extends StatelessWidget {
         children: [
           const SizedBox(width: double.infinity),
           Text('ウィスキー選びをもっとおもしろく', style: textTheme.headline5),
-          const SizedBox(height: 8),
-          const Text('あなたにぴったりのウィスキーがきっと見つかる'),
           const Spacer(),
           SignInButton(),
           const Spacer(),

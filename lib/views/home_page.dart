@@ -15,6 +15,9 @@ class HomePage extends ConsumerWidget {
     final user = watch(userProvider).user;
     final name = user?.name ?? '-';
     final textTheme = Theme.of(context).textTheme;
+    if (user == null) {
+      return const SizedBox();
+    }
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -32,11 +35,11 @@ class HomePage extends ConsumerWidget {
       body: Center(
         child: Column(
           children: [
-            CircleAvatar(foregroundImage: NetworkImage(user!.avatarUrl)),
+            CircleAvatar(foregroundImage: NetworkImage(user.avatarUrl)),
             EasyButton(
               onPressed: () {
-                context.read(userProvider).signOut();
                 Navigator.pushNamed(context, MainPage.route);
+                context.read(userProvider).signOut();
               },
               onPrimary: Theme.of(context).scaffoldBackgroundColor,
               primary: Colors.white,

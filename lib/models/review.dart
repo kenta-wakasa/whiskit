@@ -163,6 +163,16 @@ class ReviewRepository {
     review.ref.update(<String, dynamic>{'favoriteCount': favoriteCountUp});
     return review.copyWith(favoriteCount: favoriteCountUp);
   }
+
+  /// 新着レビューの最新[count]件を取得する
+  Future<List<Review>> fetchLatestReviewList({int count = 10}) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collectionGroup('WhiskyReview')
+        .orderBy('createdAt', descending: true)
+        .limit(10)
+        .get();
+    return Future.wait(snapshot.docs.map(Review.fromDoc).toList());
+  }
 }
 
 enum HowToDrink { straight, rock, water, soda }

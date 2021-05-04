@@ -51,7 +51,10 @@ class UserController extends ChangeNotifier {
 
   Future<void> signInWithGoogle() async {
     final googleUser = await GoogleSignIn().signIn();
-    final googleAuth = await googleUser!.authentication;
+    if (googleUser == null) {
+      return;
+    }
+    final googleAuth = await googleUser.authentication;
     final credential = auth.GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
