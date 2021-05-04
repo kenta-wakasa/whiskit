@@ -21,10 +21,11 @@ class MainPage extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 8,
         automaticallyImplyLeading: false,
         elevation: 0,
         title: Stack(
-          alignment: Alignment.topCenter,
+          alignment: Alignment.topLeft,
           children: [
             Row(
               children: [
@@ -34,7 +35,7 @@ class MainPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(width: 24),
+                const SizedBox(width: 40),
                 Consumer(
                   builder: (_, watch, __) {
                     final controller = watch(searchProvider);
@@ -103,71 +104,69 @@ class MainPage extends StatelessWidget {
       body: Stack(
         alignment: Alignment.topCenter,
         children: [
-          Scrollbar(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  /// サインインのウィジェット
-                  Consumer(builder: (_, watch, __) {
-                    watch(userProvider);
-                    if (FirebaseAuth.instance.currentUser == null) {
-                      return SignInWidget();
-                    }
-                    return const SizedBox();
-                  }),
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                /// サインインのウィジェット
+                Consumer(builder: (_, watch, __) {
+                  watch(userProvider);
+                  if (FirebaseAuth.instance.currentUser == null) {
+                    return SignInWidget();
+                  }
+                  return const SizedBox();
+                }),
 
-                  Consumer(builder: (_, watch, __) {
-                    final selectedWhisky = watch(whiskyProvider).selectedWhisky;
-                    if (selectedWhisky == null) {
+                Consumer(builder: (_, watch, __) {
+                  final selectedWhisky = watch(whiskyProvider).selectedWhisky;
+                  if (selectedWhisky == null) {
+                    return const SizedBox();
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 32),
+                    child: SelectedWhisky(selectedWhisky: selectedWhisky),
+                  );
+                }),
+
+                const WhiskyListWidget(key: ValueKey('WhiskyList')),
+                FutureBuilder(
+                  future: ReviewRepository.instance.fetchLatestReviewList(),
+                  builder: (context, AsyncSnapshot<List<Review>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return const SizedBox();
                     }
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32),
-                      child: SelectedWhisky(selectedWhisky: selectedWhisky),
+                    final reviewList = snapshot.data!;
+                    return SizedBox(
+                      width: 400,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 48),
+                          Text(
+                            '新着レビュー',
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                          const Divider(),
+                          const SizedBox(height: 16),
+                          ...reviewList.map(
+                            (review) {
+                              return Container(
+                                height: 200,
+                                width: 400,
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: ReviewWidget(
+                                  initReview: review,
+                                  displayImage: true,
+                                ),
+                              );
+                            },
+                          ).toList()
+                        ],
+                      ),
                     );
-                  }),
-
-                  const WhiskyListWidget(key: ValueKey('WhiskyList')),
-                  FutureBuilder(
-                    future: ReviewRepository.instance.fetchLatestReviewList(),
-                    builder: (context, AsyncSnapshot<List<Review>> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const SizedBox();
-                      }
-                      final reviewList = snapshot.data!;
-                      return SizedBox(
-                        width: 400,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 48),
-                            Text(
-                              '新着レビュー',
-                              style: Theme.of(context).textTheme.headline6,
-                            ),
-                            const Divider(),
-                            const SizedBox(height: 16),
-                            ...reviewList.map(
-                              (review) {
-                                return Container(
-                                  height: 200,
-                                  width: 400,
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: ReviewWidget(
-                                    initReview: review,
-                                    displayImage: true,
-                                  ),
-                                );
-                              },
-                            ).toList()
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+                  },
+                ),
+              ],
             ),
           ),
           Consumer(
@@ -194,6 +193,8 @@ class MainPage extends StatelessWidget {
                           child: Text(
                             whisky.name,
                             style: const TextStyle(color: Colors.black),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       );

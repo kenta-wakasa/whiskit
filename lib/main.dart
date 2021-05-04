@@ -8,7 +8,7 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:whiskit/utils/hex_color.dart';
 import 'package:whiskit/views/home_page.dart';
 import 'package:whiskit/views/main_page.dart';
-import 'package:whiskit/views/review_page.dart';
+import 'package:whiskit/views/post_review_page.dart';
 import 'package:whiskit/views/whisky_details_page.dart';
 
 /// flutter run -d chrome --web-hostname localhost --web-port 5000 --web-renderer html
@@ -66,11 +66,11 @@ class Main extends StatelessWidget {
         }
 
         if (FirebaseAuth.instance.currentUser != null) {
-          if (settings.name!.split('/')[1] == ReviewPage.route.substring(1) && settings.name!.split('/').length == 3) {
+          if (settings.name!.split('/')[1] == PostReviewPage.route.substring(1) && settings.name!.split('/').length == 3) {
             final arg = settings.name!.split('/')[2];
             return MaterialPageRoute<void>(
               settings: settings,
-              builder: (context) => ReviewPage(whiskyId: arg),
+              builder: (context) => PostReviewPage(whiskyId: arg),
             );
           }
 
