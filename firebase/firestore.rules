@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /UsersCollection/{UserId}{
+      allow read, create, update: if true
+
+      match /WhiskyLog/{WhiskyLogId}{
+        allow read, create, update: if true
+      }
+    }
+
+    // コレクショングループでのルールの書き方。
+    match /{path=**}/WhiskyReview/{WhiskyReviewId} {
+      allow read: if true
+    }
+
+    match /WhiskyCollection/{WhiskyId}{
+      allow read, update: if true
+
+      match /WhiskyReview/{ReviewId} {
+        allow read, create, update: if true
+
+        match /FavoriteReview/{FavoriteReviewId} {
+          allow write, read: if true
+        }
+      }
+    }
+  }
+}
