@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:whiskit/controllers/review_controller.dart';
+import 'package:whiskit/models/review.dart';
 
-import '/models/review.dart';
 
 class ReviewWidget extends ConsumerWidget {
   const ReviewWidget({Key? key, required this.initReview, this.displayImage = false}) : super(key: key);

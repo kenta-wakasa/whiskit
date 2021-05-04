@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '/models/user.dart';
-import '/models/whisky.dart';
+import 'package:whiskit/models/user.dart';
+import 'package:whiskit/models/whisky.dart';
 
 class WhiskyLogRepository {
   /// [User]と whiskyId から[DocumentReference]を生成する

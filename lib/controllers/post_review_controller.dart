@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whiskit/controllers/user_controller.dart';
+import 'package:whiskit/models/review.dart';
+import 'package:whiskit/models/user.dart';
 import 'package:whiskit/models/whisky.dart';
 import 'package:whiskit/models/whisky_log.dart';
 
-import '/models/review.dart';
-import '/models/user.dart';
 
 final postReviewProvider = ChangeNotifierProvider.autoDispose.family(
   (ref, String whiskyId) => PostReviewController._(whiskyId, ref.read(userProvider).user),
