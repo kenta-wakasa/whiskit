@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedantic/pedantic.dart';
-
-import '../controllers/post_review_controller.dart';
-import '/controllers/user_controller.dart';
-import '/models/review.dart';
-import '/views/utils/easy_button.dart';
+import 'package:whiskit/controllers/post_review_controller.dart';
+import 'package:whiskit/controllers/user_controller.dart';
+import 'package:whiskit/models/review.dart';
+import 'package:whiskit/views/utils/easy_button.dart';
 
 class ReviewPage extends ConsumerWidget {
   const ReviewPage({required this.whiskyId});

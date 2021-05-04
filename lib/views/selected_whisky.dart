@@ -3,18 +3,15 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:whiskit/controllers/review_controller.dart';
-
-import '../controllers/post_review_controller.dart';
-import '/controllers/user_controller.dart';
-import '/models/review.dart';
-import '/models/whisky.dart';
-import '/views/main_page.dart';
-import '/views/review_page.dart';
-import '/views/review_widget.dart';
-import '/views/utils/common_widget.dart';
-import '/views/utils/easy_button.dart';
-import '/views/whisky_details_page.dart';
+import 'package:whiskit/controllers/post_review_controller.dart';
+import 'package:whiskit/controllers/user_controller.dart';
+import 'package:whiskit/models/review.dart';
+import 'package:whiskit/models/whisky.dart';
+import 'package:whiskit/views/review_page.dart';
+import 'package:whiskit/views/review_widget.dart';
+import 'package:whiskit/views/utils/common_widget.dart';
+import 'package:whiskit/views/utils/easy_button.dart';
+import 'package:whiskit/views/whisky_details_page.dart';
 
 class SelectedWhisky extends StatefulWidget {
   const SelectedWhisky({Key? key, required this.selectedWhisky}) : super(key: key);
@@ -71,7 +68,7 @@ class _SelectedWhiskyState extends State<SelectedWhisky> {
                     const SizedBox(height: 8),
                     Text(
                       '新着レビュー',
-                      style: TextStyle(color: Theme.of(context).accentColor),
+                      style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                     ),
                     const SizedBox(height: 2),
                     FutureBuilder(
@@ -80,8 +77,8 @@ class _SelectedWhiskyState extends State<SelectedWhisky> {
                         final reviewWidget = (snapshot.connectionState == ConnectionState.waiting)
                             ? Center(child: progressIndicator())
                             : (snapshot.data == null)
-                            ? const Center(child: Text('レビューはまだありません'))
-                            : ReviewWidget(initReview: snapshot.data!);
+                                ? const Center(child: Text('レビューはまだありません'))
+                                : ReviewWidget(initReview: snapshot.data!);
 
                         return Expanded(
                           child: Container(
@@ -90,7 +87,7 @@ class _SelectedWhiskyState extends State<SelectedWhisky> {
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
                                 width: 2,
-                                color: Theme.of(context).accentColor.withOpacity(.2),
+                                color: Theme.of(context).colorScheme.secondary.withOpacity(.2),
                               ),
                             ),
                             child: reviewWidget,
@@ -129,7 +126,7 @@ class _SelectedWhiskyState extends State<SelectedWhisky> {
                           onPrimary: Colors.white,
                           text: '楽天',
                         ),
-                        const SizedBox(width: basePadding),
+                        const SizedBox(width: 16),
                         EasyButton(
                           onPressed: widget.selectedWhisky.amazon == '-'
                               ? null

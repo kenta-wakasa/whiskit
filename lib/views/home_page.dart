@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/models/whisky.dart';
 import 'package:whiskit/models/whisky_log.dart';
 import 'package:whiskit/views/main_page.dart';
 import 'package:whiskit/views/utils/easy_button.dart';
-
-import '/controllers/user_controller.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);

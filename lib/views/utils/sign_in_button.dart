@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart' as button;
-
-import '/controllers/user_controller.dart';
+import 'package:whiskit/controllers/user_controller.dart';
 
 class SignInButton extends StatelessWidget {
   @override

@@ -2,18 +2,20 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '/models/whisky.dart';
+import 'package:whiskit/models/whisky.dart';
 
 final whiskyProvider = ChangeNotifierProvider(
-  (ref) => WhiskyController._().._init(),
+  (ref) => WhiskyListController._().._init(),
 );
 
-class WhiskyController extends ChangeNotifier {
-  WhiskyController._();
+class WhiskyListController extends ChangeNotifier {
+  WhiskyListController._();
 
   List<Whisky>? whiskyList;
+
   Whisky? selectedWhisky;
+
+
 
   Future<void> _init() async {
     await _fetchWhiskyList();
