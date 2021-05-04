@@ -27,8 +27,6 @@ Future<void> main() async {
   await Firebase.initializeApp();
   await FirebaseAuth.instance.userChanges().first;
 
-  final reviewList = await ReviewRepository.instance.fetchLatestReviewList();
-  print(reviewList.length);
   runApp(ProviderScope(child: Main()));
 }
 
@@ -50,6 +48,7 @@ class Main extends StatelessWidget {
           headline5: TextStyle(fontWeight: FontWeight.bold),
           headline6: TextStyle(fontWeight: FontWeight.bold),
         ),
+        dividerTheme: const DividerThemeData(thickness: .5, color: Colors.white),
         accentColor: Colors.blue,
       ),
       initialRoute: MainPage.route,

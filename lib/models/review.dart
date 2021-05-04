@@ -17,6 +17,7 @@ class Review {
     required this.aromaList,
     required this.sweet,
     required this.rich,
+    required this.imageUrl,
     this.favoriteCount,
   });
 
@@ -29,6 +30,7 @@ class Review {
     required this.aromaList,
     required this.sweet,
     required this.rich,
+    required this.imageUrl,
     this.favoriteCount,
   }) : createdAt = Timestamp.now();
 
@@ -42,6 +44,7 @@ class Review {
   final int sweet;
   final int rich;
   final int? favoriteCount;
+  final String imageUrl;
 
   static Future<Review> fromDoc(DocumentSnapshot doc) async {
     var howToDrinkStringList = <String>[];
@@ -80,15 +83,16 @@ class Review {
       sweet: doc.data()!['sweet'] as int,
       rich: doc.data()!['rich'] as int,
       favoriteCount: doc.data()!['favoriteCount'] == null ? 0 : doc.data()!['favoriteCount'] as int,
+      imageUrl: doc.data()!['imageUrl'] as String,
     );
   }
 
-  // @override
-  // bool operator ==(Object other) =>
-  //     identical(this, other) || other is Review && runtimeType == other.runtimeType && ref == other.ref;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Review && runtimeType == other.runtimeType && ref == other.ref;
 
-  // @override
-  // int get hashCode => ref.hashCode;
+  @override
+  int get hashCode => ref.toString().hashCode;
 
   Review copyWith({
     User? user,
@@ -101,6 +105,7 @@ class Review {
     int? sweet,
     int? rich,
     int? favoriteCount,
+    String? imageUrl,
   }) {
     return Review._(
       user: user ?? this.user,
@@ -113,6 +118,7 @@ class Review {
       rich: rich ?? this.rich,
       aromaList: aromaList ?? this.aromaList,
       favoriteCount: favoriteCount ?? this.favoriteCount,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 }

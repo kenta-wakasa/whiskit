@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whiskit/models/review.dart';
+import 'package:whiskit/views/review_widget.dart';
+import 'package:whiskit/views/utils/common_widget.dart';
 
 import '/controllers/user_controller.dart';
 import '/views/sing_in_widget.dart';
@@ -31,6 +34,37 @@ class MainPage extends StatelessWidget {
                   return const SizedBox();
                 }),
                 const WhiskyListWidget(key: ValueKey('WhiskyList')),
+                FutureBuilder(
+                  future: ReviewRepository.instance.fetchLatestReviewList(),
+                  builder: (context, AsyncSnapshot<List<Review>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox();
+                    }
+                    final reviewList = snapshot.data!;
+                    return SizedBox(
+                      width: 400,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 48),
+                          Text(
+                            '新着レビュー',
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                          const Divider(),
+                          const SizedBox(height: 16),
+                          ...reviewList.map((review) {
+                            return SizedBox(
+                              height: 200,
+                              width: 400,
+                              child: ReviewWidget(initReview: review, displayImage: true),
+                            );
+                          }).toList()
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),

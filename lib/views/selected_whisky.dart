@@ -60,7 +60,7 @@ class _SelectedWhiskyState extends State<SelectedWhisky> {
                       style: textTheme.headline6,
                       maxLines: 1,
                     ),
-                    const Divider(color: Colors.white, height: 8),
+                    const Divider(),
                     Text(
                       'Age: ${widget.selectedWhisky.age == 0 ? '-' : widget.selectedWhisky.age}   '
                       'Alcohol: ${widget.selectedWhisky.alcohol}   '

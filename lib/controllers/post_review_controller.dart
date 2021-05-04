@@ -19,7 +19,7 @@ class PostReviewController extends ChangeNotifier {
 
   final String whiskyId;
   final User? user;
-  Review? review;
+  Whisky? whisky;
   String title = '';
   String content = '';
   List<HowToDrink> howToDrinkList = <HowToDrink>[];
@@ -38,6 +38,9 @@ class PostReviewController extends ChangeNotifier {
     if (user == null) {
       return;
     }
+
+    whisky = await WhiskyRepository.instance.fetchWhiskyById(whiskyId);
+
     final review = await ReviewRepository.instance.fetchReviewByWhiskyAndUser(
       whiskyId: whiskyId,
       userId: user!.ref.id,
@@ -70,9 +73,29 @@ class PostReviewController extends ChangeNotifier {
       aromaList: aromaList,
       sweet: sweet,
       rich: rich,
+      imageUrl: whisky!.imageUrl,
     );
 
+    final drinkKeys = howToDrinkList.map((e) => e.toString().split('.').last).toList();
+    final aromaKeys = aromaList.map((e) => e.toString().split('.').last).toList();
+
+    final whiskyUpdateMap = <String, dynamic>{};
+
+    for (final drinkKey in drinkKeys) {
+      whiskyUpdateMap[drinkKey] = FieldValue.increment(1);
+    }
+
+    for (final aromaKey in aromaKeys) {
+      whiskyUpdateMap[aromaKey] = FieldValue.increment(1);
+    }
+
+    whiskyUpdateMap['reviewCount'] = FieldValue.increment(1);
+
+    print(whiskyUpdateMap);
+
     final doc = await ref.get();
+
+    final whiskyDocRef = review.ref.parent.parent!;
 
     // 二回目以降の投稿の場合
     if (doc.exists) {
@@ -88,6 +111,7 @@ class PostReviewController extends ChangeNotifier {
             'sweet': review.sweet,
             'rich': review.rich,
             'createdAt': review.createdAt,
+            'imageUrl': whisky!.imageUrl,
           },
           SetOptions(merge: true),
         ) // 参考:https://tomokazu-kozuma.com/difference-between-set-and-update-when-updating-cloud-firestore-data/
@@ -111,6 +135,7 @@ class PostReviewController extends ChangeNotifier {
             'rich': review.rich,
             'createdAt': review.createdAt,
             'favoriteCount': 0, //初めての投稿の場合は 0 で初期化する
+            'imageUrl': whisky!.imageUrl,
           },
           SetOptions(merge: true),
         ) // 参考:https://tomokazu-kozuma.com/difference-between-set-and-update-when-updating-cloud-firestore-data/
@@ -121,12 +146,14 @@ class PostReviewController extends ChangeNotifier {
         // ユーザーの投稿レビューの総数をカウントアップする
         ..update(
           UserRepository.instance.collectionRef.doc(user.ref.id),
-          <String, dynamic>{'reviewCount': FieldValue.increment(1)},
+          <String, dynamic>{
+            'reviewCount': FieldValue.increment(1),
+          },
         )
         // ウィスキーの投稿レビューの総数をカウントアップする
         ..set(
-          review.ref.parent.parent!,
-          <String, dynamic>{'reviewCount': FieldValue.increment(1)},
+          whiskyDocRef,
+          whiskyUpdateMap,
           SetOptions(merge: true),
         );
 
@@ -134,16 +161,21 @@ class PostReviewController extends ChangeNotifier {
     }
 
     // 平均値を更新する
-    final whiskySnapshot = await review.ref.parent.parent!.get();
+    final whiskySnapshot = await whiskyDocRef.get();
     final whiskyReviewCount = whiskySnapshot.data()!['reviewCount'] as int;
 
     final oldSweetAverage = whiskySnapshot.data()!['sweetAverage'] as int? ?? 0;
     final newSweetAverage = (((whiskyReviewCount - 1) * oldSweetAverage) + sweet) / whiskyReviewCount;
-    print('sweetAverage $newSweetAverage');
 
     final oldRichAverage = whiskySnapshot.data()!['richAverage'] as int? ?? 0;
     final newRichAverage = (((whiskyReviewCount - 1) * oldRichAverage) + rich) / whiskyReviewCount;
-    print('richAverage $newRichAverage');
+
+    await whiskyDocRef.update(
+      <String, dynamic>{
+        'sweetAverage': newSweetAverage,
+        'richAverage': newRichAverage,
+      },
+    );
   }
 
   void updateTitle(String value) {
