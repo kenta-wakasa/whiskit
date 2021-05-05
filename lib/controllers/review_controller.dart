@@ -49,6 +49,7 @@ class ReviewController extends ChangeNotifier {
           'favoriteCount': FieldValue.increment(-1),
         },
       );
+
       exitsFavorite = false;
     }
     // お気に入りを追加する
@@ -63,6 +64,16 @@ class ReviewController extends ChangeNotifier {
           'favoriteCount': FieldValue.increment(1),
         },
       );
+      final notificationId = review.ref.parent.parent!.id + review.ref.id + uid;
+      // 通知を飛ばす
+      review.user.ref.collection('UserNotification').doc(notificationId).set(<String, dynamic>{
+        'userRef': user!.ref,
+        'reviewRef': review.ref,
+        'createdAt': Timestamp.now(),
+      });
+
+      review.user.ref.update(<String, dynamic>{'notificationCount': FieldValue.increment(1)});
+
       exitsFavorite = true;
     }
 

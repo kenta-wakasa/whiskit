@@ -5,10 +5,12 @@ import 'package:whiskit/controllers/search_controller.dart';
 import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/controllers/whisky_list_controller.dart';
 import 'package:whiskit/models/review.dart';
+import 'package:whiskit/models/user_notification.dart';
 import 'package:whiskit/views/home_page.dart';
 import 'package:whiskit/views/review_widget.dart';
 import 'package:whiskit/views/selected_whisky.dart';
 import 'package:whiskit/views/sing_in_widget.dart';
+import 'package:whiskit/views/utils/common_widget.dart';
 import 'package:whiskit/views/whisky_details_page.dart';
 import 'package:whiskit/views/whisky_list_widget.dart';
 
@@ -18,7 +20,6 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 8,
@@ -29,48 +30,96 @@ class MainPage extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text('WHISKIT', style: textTheme.headline5),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(width: 40),
+                logo(context),
+                const Spacer(flex: 1),
                 Consumer(
                   builder: (_, watch, __) {
                     final controller = watch(searchProvider);
-                    return SizedBox(
-                      width: 240,
-                      height: 40,
-                      child: TextFormField(
-                        key: const ValueKey('Search'),
-                        onChanged: (text) {
-                          controller.search(
-                            whiskyList: context.read(whiskyProvider).whiskyList!,
-                            searchToText: text,
-                          );
-                        },
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(32)),
-                            gapPadding: 16,
+                    return Expanded(
+                      flex: 4,
+                      child: SizedBox(
+                        height: 32,
+                        child: TextFormField(
+                          key: const ValueKey('Search'),
+                          onChanged: (text) {
+                            controller.search(
+                              whiskyList: context.read(whiskyProvider).whiskyList,
+                              searchToText: text,
+                            );
+                          },
+                          style: const TextStyle(fontSize: 12),
+                          decoration: const InputDecoration(
+                            border:
+                                OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(32)), gapPadding: 0),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                            hintText: '名前で調べる...',
+                            contentPadding: EdgeInsets.all(0),
                           ),
-                          prefixIcon: Icon(
-                            Icons.search,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                          hintText: '名前で調べる...',
                         ),
                       ),
                     );
                   },
                 ),
+                const Spacer(flex: 1),
               ],
             ),
           ],
         ),
         actions: [
+          Consumer(builder: (_, watch, __) {
+            final controller = watch(userProvider);
+            final user = watch(userProvider).user;
+            if (user == null) {
+              return const SizedBox();
+            }
+            return PopupMenuButton<void>(
+              offset: const Offset(32, 56),
+              tooltip: '通知',
+              onSelected: null,
+              itemBuilder: (BuildContext context) {
+                controller.updateUserNotification();
+                return <PopupMenuEntry<void>>[
+                  PopupMenuItem<void>(
+                    padding: EdgeInsets.zero,
+                    enabled: false,
+                    child: SizedBox(
+                      height: 320,
+                      width: 160,
+                      child: FutureBuilder(
+                        future: controller.fetchLatestNotification(),
+                        builder: (context, AsyncSnapshot<List<UserNotification>> snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const SizedBox();
+                          }
+                          final notificationList = snapshot.data;
+                          if (notificationList == null) {
+                            return const SizedBox();
+                          }
+                          return Scrollbar(
+                            child: ListView.builder(
+                              itemCount: notificationList.length,
+                              itemBuilder: (context, index) {
+                                final notification = notificationList[index];
+                                return ListTile(
+                                  onTap: () {},
+                                  title: Text(notification.review.title),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ];
+              },
+              child: notificationIcon(user),
+            );
+          }),
           InkWell(
             onTap: () {
               // サインインしていない
@@ -105,68 +154,71 @@ class MainPage extends StatelessWidget {
         alignment: Alignment.topCenter,
         children: [
           SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                /// サインインのウィジェット
-                Consumer(builder: (_, watch, __) {
-                  watch(userProvider);
-                  if (FirebaseAuth.instance.currentUser == null) {
-                    return SignInWidget();
-                  }
-                  return const SizedBox();
-                }),
-
-                Consumer(builder: (_, watch, __) {
-                  final selectedWhisky = watch(whiskyProvider).selectedWhisky;
-                  if (selectedWhisky == null) {
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  /// サインインのウィジェット
+                  Consumer(builder: (_, watch, __) {
+                    watch(userProvider);
+                    if (FirebaseAuth.instance.currentUser == null) {
+                      return SignInWidget();
+                    }
                     return const SizedBox();
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 32),
-                    child: SelectedWhisky(selectedWhisky: selectedWhisky),
-                  );
-                }),
+                  }),
 
-                const WhiskyListWidget(key: ValueKey('WhiskyList')),
-                FutureBuilder(
-                  future: ReviewRepository.instance.fetchLatestReviewList(),
-                  builder: (context, AsyncSnapshot<List<Review>> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+                  Consumer(builder: (_, watch, __) {
+                    final selectedWhisky = watch(whiskyProvider).selectedWhisky;
+                    if (selectedWhisky == null) {
                       return const SizedBox();
                     }
-                    final reviewList = snapshot.data!;
-                    return SizedBox(
-                      width: 400,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 48),
-                          Text(
-                            '新着レビュー',
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                          const Divider(),
-                          const SizedBox(height: 16),
-                          ...reviewList.map(
-                            (review) {
-                              return Container(
-                                height: 200,
-                                width: 400,
-                                padding: const EdgeInsets.only(bottom: 16),
-                                child: ReviewWidget(
-                                  initReview: review,
-                                  displayImage: true,
-                                ),
-                              );
-                            },
-                          ).toList()
-                        ],
-                      ),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32),
+                      child: SelectedWhisky(whisky: selectedWhisky),
                     );
-                  },
-                ),
-              ],
+                  }),
+
+                  const WhiskyListWidget(key: ValueKey('WhiskyList')),
+                  FutureBuilder(
+                    future: ReviewRepository.instance.fetchLatestReviewList(),
+                    builder: (context, AsyncSnapshot<List<Review>> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox();
+                      }
+                      final reviewList = snapshot.data!;
+                      return SizedBox(
+                        width: 400,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 48),
+                            Text(
+                              '新着レビュー',
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                            const Divider(),
+                            const SizedBox(height: 16),
+                            ...reviewList.map(
+                              (review) {
+                                return Container(
+                                  height: 200,
+                                  width: 400,
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: ReviewWidget(
+                                    initReview: review,
+                                    displayImage: true,
+                                  ),
+                                );
+                              },
+                            ).toList()
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           Consumer(
