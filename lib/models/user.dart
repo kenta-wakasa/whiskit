@@ -11,6 +11,7 @@ class User {
     required this.ref,
     required this.favoriteCount,
     required this.reviewCount,
+    required this.notificationCount,
   });
 
   factory User.fromAuthUser(auth.User authUser) {
@@ -21,6 +22,7 @@ class User {
       ref: UserRepository.instance.collectionRef.doc(authUser.uid),
       reviewCount: 0,
       favoriteCount: 0,
+      notificationCount: 0,
     );
   }
 
@@ -32,6 +34,7 @@ class User {
       ref: doc.reference,
       reviewCount: doc.data()!['reviewCount'] as int,
       favoriteCount: doc.data()!['favoriteCount'] as int,
+      notificationCount: doc.data()!['notificationCount'] as int? ?? 0,
     );
   }
 
@@ -46,8 +49,17 @@ class User {
   /// 自分が書いた投稿の総数
   final int reviewCount;
 
+  /// 自分が未読の通知数
+  final int notificationCount;
+
   Future<User> updateName(String name) async {
     final users = copyWith(name: name);
+    await UserRepository.instance.updateUsers(users);
+    return users;
+  }
+
+  Future<User> updateUserNotification() async {
+    final users = copyWith(notificationCount: 0);
     await UserRepository.instance.updateUsers(users);
     return users;
   }
@@ -66,6 +78,7 @@ class User {
     DocumentReference? ref,
     int? favoriteCount,
     int? reviewCount,
+    int? notificationCount,
   }) {
     return User._(
       name: name ?? this.name,
@@ -74,6 +87,7 @@ class User {
       ref: ref ?? this.ref,
       favoriteCount: favoriteCount ?? this.favoriteCount,
       reviewCount: reviewCount ?? this.reviewCount,
+      notificationCount: notificationCount ?? this.notificationCount,
     );
   }
 }
@@ -112,8 +126,8 @@ class UserRepository {
     await user.ref.update(
       <String, dynamic>{
         'name': user.name,
-        'createdAt': user.createdAt,
         'avatarUrl': user.avatarUrl,
+        'notificationCount': user.notificationCount,
       },
     );
   }

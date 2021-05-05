@@ -59,34 +59,53 @@ class Main extends StatelessWidget {
         if (settings.name!.split('/')[1] == WhiskyDetailsPage.route.substring(1) &&
             settings.name!.split('/').length == 3) {
           final arg = settings.name!.split('/')[2];
-          return MaterialPageRoute<void>(
+          return NoAnimationMaterialPageRoute<void>(
             settings: settings,
             builder: (context) => WhiskyDetailsPage(whiskyId: arg),
           );
         }
 
+        /// 認証が済んでいるか
         if (FirebaseAuth.instance.currentUser != null) {
-          if (settings.name!.split('/')[1] == PostReviewPage.route.substring(1) && settings.name!.split('/').length == 3) {
+          if (settings.name!.split('/')[1] == PostReviewPage.route.substring(1) &&
+              settings.name!.split('/').length == 3) {
             final arg = settings.name!.split('/')[2];
-            return MaterialPageRoute<void>(
+            return NoAnimationMaterialPageRoute<void>(
               settings: settings,
               builder: (context) => PostReviewPage(whiskyId: arg),
             );
           }
 
           if (settings.name!.split('/')[1] == HomePage.route.substring(1)) {
-            return MaterialPageRoute<void>(
+            return NoAnimationMaterialPageRoute<void>(
               settings: settings,
               builder: (context) => const HomePage(),
             );
           }
         }
 
-        return MaterialPageRoute<void>(
+        return NoAnimationMaterialPageRoute<void>(
           settings: settings,
           builder: (context) => const MainPage(key: ValueKey('main')),
         );
       },
     );
+  }
+}
+
+
+/// アニメーションのないMaterialPageRoute
+class NoAnimationMaterialPageRoute<T> extends MaterialPageRoute<T> {
+  NoAnimationMaterialPageRoute({
+    required WidgetBuilder builder,
+    required RouteSettings settings,
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+  }) : super(builder: builder, maintainState: maintainState, settings: settings, fullscreenDialog: fullscreenDialog);
+
+  @override
+  Widget buildTransitions(
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    return child;
   }
 }

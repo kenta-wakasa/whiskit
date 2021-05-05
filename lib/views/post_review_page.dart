@@ -4,6 +4,7 @@ import 'package:pedantic/pedantic.dart';
 import 'package:whiskit/controllers/post_review_controller.dart';
 import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/models/review.dart';
+import 'package:whiskit/views/utils/common_widget.dart';
 import 'package:whiskit/views/utils/easy_button.dart';
 
 class PostReviewPage extends ConsumerWidget {
@@ -17,10 +18,14 @@ class PostReviewPage extends ConsumerWidget {
     final controller = watch(postReviewProvider(whiskyId));
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 8,
+        elevation: 0,
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [Text('WHISKIT', style: textTheme.headline5)],
+          children: [
+            logo(context),
+          ],
         ),
         actions: [
           Padding(

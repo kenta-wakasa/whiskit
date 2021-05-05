@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:whiskit/models/user.dart';
+import 'package:whiskit/models/user_notification.dart';
 
 final userProvider = ChangeNotifierProvider<UserController>(
   (ref) => UserController._().._init(),
@@ -38,6 +39,7 @@ class UserController extends ChangeNotifier {
       _user = User.fromAuthUser(authUser);
       await UserRepository.instance.addUsers(User.fromAuthUser(authUser));
       _user = await UserRepository.instance.fetchByRef(_user!.ref);
+      print(_user?.notificationCount);
     }
     notifyListeners();
   }
@@ -69,5 +71,26 @@ class UserController extends ChangeNotifier {
     }
     _user = await _user!.updateName(name);
     notifyListeners();
+  }
+
+  Future<void> updateUserNotification() async {
+    _user = await _user!.updateUserNotification();
+    notifyListeners();
+  }
+
+  /// 新着の通知を取得する
+  Future<List<UserNotification>> fetchLatestNotification() async {
+    if (user == null) {
+      return <UserNotification>[];
+    }
+    final snapshot = await user!.ref
+        .collection('UserNotification')
+        .orderBy(
+          'createdAt',
+          descending: true,
+        )
+        .limit(10)
+        .get();
+    return Future.wait(snapshot.docs.map(UserNotification.fromDoc).toList());
   }
 }

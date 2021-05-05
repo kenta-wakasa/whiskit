@@ -8,6 +8,10 @@ service cloud.firestore {
       match /WhiskyLog/{WhiskyLogId}{
         allow read, create, update: if true
       }
+      
+      match /UserNotification/{UserNotificationId}{
+      	allow read, create, update : if true
+      }
     }
 
     // コレクショングループでのルールの書き方。
