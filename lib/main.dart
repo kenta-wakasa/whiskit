@@ -5,10 +5,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:whiskit/models/review.dart';
 import 'package:whiskit/utils/hex_color.dart';
 import 'package:whiskit/views/home_page.dart';
 import 'package:whiskit/views/main_page.dart';
 import 'package:whiskit/views/post_review_page.dart';
+import 'package:whiskit/views/review_details_page.dart';
 import 'package:whiskit/views/whisky_details_page.dart';
 
 /// flutter run -d chrome --web-hostname localhost --web-port 5000 --web-renderer html
@@ -65,6 +67,17 @@ class Main extends StatelessWidget {
           );
         }
 
+        if (settings.name!.split('/')[1] == ReviewDetailsPage.route.substring(1) &&
+            settings.name!.split('/').length == 4) {
+          final whiskyId = settings.name!.split('/')[2];
+          final reviewId = settings.name!.split('/')[3];
+          final reviewRef = ReviewRepository.instance.collectionRef(whiskyId: whiskyId).doc(reviewId);
+          return NoAnimationMaterialPageRoute<void>(
+            settings: settings,
+            builder: (context) => ReviewDetailsPage(reviewRef: reviewRef),
+          );
+        }
+
         /// 認証が済んでいるか
         if (FirebaseAuth.instance.currentUser != null) {
           if (settings.name!.split('/')[1] == PostReviewPage.route.substring(1) &&
@@ -92,7 +105,6 @@ class Main extends StatelessWidget {
     );
   }
 }
-
 
 /// アニメーションのないMaterialPageRoute
 class NoAnimationMaterialPageRoute<T> extends MaterialPageRoute<T> {

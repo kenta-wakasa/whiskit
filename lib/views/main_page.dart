@@ -5,11 +5,12 @@ import 'package:whiskit/controllers/search_controller.dart';
 import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/controllers/whisky_list_controller.dart';
 import 'package:whiskit/models/review.dart';
-import 'package:whiskit/models/user_notification.dart';
-import 'package:whiskit/views/home_page.dart';
+import 'package:whiskit/views/pop_up_notification_menu.dart';
 import 'package:whiskit/views/review_widget.dart';
+import 'package:whiskit/views/search_form.dart';
 import 'package:whiskit/views/selected_whisky.dart';
 import 'package:whiskit/views/sing_in_widget.dart';
+import 'package:whiskit/views/user_icon.dart';
 import 'package:whiskit/views/utils/common_widget.dart';
 import 'package:whiskit/views/whisky_details_page.dart';
 import 'package:whiskit/views/whisky_list_widget.dart';
@@ -32,37 +33,9 @@ class MainPage extends StatelessWidget {
               children: [
                 logo(context),
                 const Spacer(flex: 1),
-                Consumer(
-                  builder: (_, watch, __) {
-                    final controller = watch(searchProvider);
-                    return Expanded(
-                      flex: 4,
-                      child: SizedBox(
-                        height: 32,
-                        child: TextFormField(
-                          key: const ValueKey('Search'),
-                          onChanged: (text) {
-                            controller.search(
-                              whiskyList: context.read(whiskyProvider).whiskyList,
-                              searchToText: text,
-                            );
-                          },
-                          style: const TextStyle(fontSize: 12),
-                          decoration: const InputDecoration(
-                            border:
-                                OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(32)), gapPadding: 0),
-                            prefixIcon: Icon(
-                              Icons.search,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                            hintText: '名前で調べる...',
-                            contentPadding: EdgeInsets.all(0),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                Expanded(
+                  flex: 4,
+                  child: SearchForm(),
                 ),
                 const Spacer(flex: 1),
               ],
@@ -70,84 +43,8 @@ class MainPage extends StatelessWidget {
           ],
         ),
         actions: [
-          Consumer(builder: (_, watch, __) {
-            final controller = watch(userProvider);
-            final user = watch(userProvider).user;
-            if (user == null) {
-              return const SizedBox();
-            }
-            return PopupMenuButton<void>(
-              offset: const Offset(32, 56),
-              tooltip: '通知',
-              onSelected: null,
-              itemBuilder: (BuildContext context) {
-                controller.updateUserNotification();
-                return <PopupMenuEntry<void>>[
-                  PopupMenuItem<void>(
-                    padding: EdgeInsets.zero,
-                    enabled: false,
-                    child: SizedBox(
-                      height: 320,
-                      width: 160,
-                      child: FutureBuilder(
-                        future: controller.fetchLatestNotification(),
-                        builder: (context, AsyncSnapshot<List<UserNotification>> snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const SizedBox();
-                          }
-                          final notificationList = snapshot.data;
-                          if (notificationList == null) {
-                            return const SizedBox();
-                          }
-                          return Scrollbar(
-                            child: ListView.builder(
-                              itemCount: notificationList.length,
-                              itemBuilder: (context, index) {
-                                final notification = notificationList[index];
-                                return ListTile(
-                                  onTap: () {},
-                                  title: Text(notification.review.title),
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ];
-              },
-              child: notificationIcon(user),
-            );
-          }),
-          InkWell(
-            onTap: () {
-              // サインインしていない
-              if (context.read(userProvider).user == null) {
-                // TODO: sign in をうながすダイアログを出すなど
-
-              }
-              // サインインしている
-              else {
-                Navigator.pushNamed(context, HomePage.route);
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              child: FittedBox(
-                fit: BoxFit.fill,
-                child: Consumer(
-                  builder: (_, watch, __) {
-                    final user = watch(userProvider).user;
-                    if (user == null) {
-                      return const Icon(Icons.account_circle_rounded);
-                    }
-                    return CircleAvatar(foregroundImage: NetworkImage(user.avatarUrl));
-                  },
-                ),
-              ),
-            ),
-          ),
+          PopUpNotificationMenu(),
+          UserIcon(),
         ],
       ),
       body: Stack(

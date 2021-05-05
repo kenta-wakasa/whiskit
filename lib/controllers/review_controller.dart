@@ -8,12 +8,12 @@ import 'package:whiskit/models/user.dart';
 final reviewProvider = ChangeNotifierProvider.autoDispose.family(
   (ref, Review review) {
     final user = ref.read(userProvider).user;
-    return ReviewController._(review, user);
+    return ReviewController._(review: review, user: user);
   },
 );
 
 class ReviewController extends ChangeNotifier {
-  ReviewController._(this.review, this.user) {
+  ReviewController._({required this.review, this.user}) {
     init();
   }
 

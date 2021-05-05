@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:whiskit/models/user.dart';
+import 'package:whiskit/models/user_notification.dart';
 import 'package:whiskit/models/whisky.dart';
 import 'package:whiskit/views/main_page.dart';
 
@@ -64,5 +65,14 @@ Widget notificationIcon(User user) {
             )
           : const SizedBox(),
     ],
+  );
+}
+
+Widget userNotificationTile(UserNotification userNotification) {
+  return ListTile(
+    leading: CircleAvatar(foregroundImage: NetworkImage(userNotification.user.avatarUrl)),
+    subtitle: Text(
+      '${userNotification.user.name}さんが「${userNotification.review.title}」にいいねしました。',
+    ),
   );
 }
