@@ -21,10 +21,10 @@ class ReviewDetailsPage extends StatelessWidget {
           }
           final review = snapshot.data;
           if (review == null) {
+            // リダイレクトのやり方:参考 https://stackoverflow.com/questions/55618717/error-thrown-on-navigator-pop-until-debuglocked-is-not-true
             Future.delayed(Duration.zero, () {
               Navigator.of(context).pushReplacementNamed(MainPage.route);
             });
-
             return const SizedBox();
           }
           return Center(

@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:whiskit/models/review.dart';
 import 'package:whiskit/utils/hex_color.dart';
 import 'package:whiskit/views/home_page.dart';
@@ -15,7 +16,7 @@ import 'package:whiskit/views/whisky_details_page.dart';
 
 /// flutter run -d chrome --web-hostname localhost --web-port 5000 --web-renderer html
 /// flutter build web --web-renderer html でビルドすること
-/// firebase deploy --only hosting でデプロイ。
+/// firebase deploy --only hosting でデプロイ
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -25,7 +26,7 @@ Future<void> main() async {
   // Url から # を取り除くための設定
   setUrlStrategy(PathUrlStrategy());
   await Firebase.initializeApp();
-  await FirebaseAuth.instance.userChanges().first;
+  await FirebaseAuth.instance.authStateChanges().first;
 
   runApp(ProviderScope(child: Main()));
 }
@@ -41,11 +42,11 @@ class Main extends StatelessWidget {
         backgroundColor: backgroundColor,
         elevation: 0,
       ),
-      textTheme: const TextTheme(
+      textTheme: GoogleFonts.latoTextTheme(const TextTheme(
         bodyText1: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         headline5: TextStyle(fontWeight: FontWeight.bold),
         headline6: TextStyle(fontWeight: FontWeight.bold),
-      ),
+      )),
       dividerTheme: const DividerThemeData(thickness: .5, color: Colors.white),
       primarySwatch: Colors.blue,
     );
