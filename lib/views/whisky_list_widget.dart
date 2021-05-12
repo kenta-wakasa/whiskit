@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:whiskit/controllers/whisky_list_controller.dart';
+import 'package:whiskit/views/utils/common_whisky_imga.dart';
 
 class WhiskyListWidget extends ConsumerWidget {
   const WhiskyListWidget({Key? key}) : super(key: key);
@@ -31,11 +32,7 @@ class WhiskyListWidget extends ConsumerWidget {
             final whisky = whiskyList[index];
             return InkWell(
               onTap: () => controller.select(whisky),
-              child: FadeInImage.memoryNetwork(
-                fadeInDuration: const Duration(milliseconds: 400),
-                placeholder: kTransparentImage,
-                image: whisky.imageUrl,
-              ),
+              child: CommonWhiskyImage(imageUrl: whisky.imageUrl),
             );
           },
         ),

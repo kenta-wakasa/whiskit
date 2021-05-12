@@ -7,6 +7,7 @@ import 'package:whiskit/models/review.dart';
 import 'package:whiskit/models/whisky.dart';
 import 'package:whiskit/views/post_review_page.dart';
 import 'package:whiskit/views/review_widget.dart';
+import 'package:whiskit/views/utils/common_whisky_imga.dart';
 import 'package:whiskit/views/utils/common_widget.dart';
 import 'package:whiskit/views/utils/easy_button.dart';
 import 'package:whiskit/views/whisky_details_page.dart';
@@ -41,14 +42,7 @@ class _SelectedWhiskyState extends State<SelectedWhisky> {
               Expanded(
                 child: Row(
                   children: [
-                    Expanded(
-                      flex: 1,
-                      child: FadeInImage.memoryNetwork(
-                        fadeInDuration: const Duration(milliseconds: 320),
-                        placeholder: kTransparentImage,
-                        image: whisky.imageUrl,
-                      ),
-                    ),
+                    Expanded(flex: 1, child: CommonWhiskyImage(imageUrl: whisky.imageUrl)),
                     Expanded(
                       flex: 4,
                       child: FutureBuilder(
