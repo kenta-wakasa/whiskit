@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/views/home_page.dart';
 
-class UserIcon extends ConsumerWidget {
+class CommonUserIcon extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final controller = watch(userProvider);
@@ -13,12 +13,10 @@ class UserIcon extends ConsumerWidget {
         // サインインしていない
         if (controller.user == null) {
           // TODO: sign in をうながすダイアログを出すなど
-
+          return;
         }
         // サインインしている
-        else {
-          Navigator.pushNamed(context, HomePage.route);
-        }
+        Navigator.pushNamed(context, HomePage.route);
       },
       child: Container(
         padding: const EdgeInsets.all(8),

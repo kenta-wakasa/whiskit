@@ -1,13 +1,11 @@
-import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:transparent_image/transparent_image.dart';
+import 'package:path/path.dart' as p;
 
 import 'package:whiskit/controllers/review_controller.dart';
 import 'package:whiskit/models/review.dart';
 import 'package:whiskit/views/review_details_page.dart';
-import 'package:whiskit/views/utils/common_whisky_imga.dart';
+import 'package:whiskit/views/utils/common_whisky_image.dart';
 
 class ReviewWidget extends ConsumerWidget {
   const ReviewWidget({Key? key, required this.initReview, this.displayImage = false}) : super(key: key);
@@ -18,9 +16,7 @@ class ReviewWidget extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
     final controller = watch(reviewProvider(initReview));
     final review = controller.review;
-    final image = displayImage
-        ? CommonWhiskyImage(imageUrl: review.imageUrl)
-        : const SizedBox();
+    final image = displayImage ? CommonWhiskyImage(imageUrl: review.imageUrl) : const SizedBox();
     return Padding(
       padding: const EdgeInsets.all(8),
       child: InkWell(

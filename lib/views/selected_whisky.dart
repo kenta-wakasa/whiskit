@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:transparent_image/transparent_image.dart';
+
 import 'package:whiskit/controllers/post_review_controller.dart';
 import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/models/review.dart';
 import 'package:whiskit/models/whisky.dart';
 import 'package:whiskit/views/post_review_page.dart';
 import 'package:whiskit/views/review_widget.dart';
-import 'package:whiskit/views/utils/common_whisky_imga.dart';
-import 'package:whiskit/views/utils/common_widget.dart';
+import 'package:whiskit/views/utils/common_whisky_image.dart';
+import 'package:whiskit/views/utils/common_whisky_info.dart';
 import 'package:whiskit/views/utils/easy_button.dart';
 import 'package:whiskit/views/whisky_details_page.dart';
 
@@ -26,10 +26,7 @@ class _SelectedWhiskyState extends State<SelectedWhisky> {
   Widget build(BuildContext context) {
     final whisky = widget.whisky;
     return InkWell(
-      onTap: () => Navigator.pushNamed(
-        context,
-        '${WhiskyDetailsPage.route}/${whisky.ref.id}',
-      ),
+      onTap: () => Navigator.pushNamed(context, '${WhiskyDetailsPage.route}/${whisky.ref.id}'),
       child: SizedBox(
         height: 300,
         width: 400,
@@ -37,7 +34,7 @@ class _SelectedWhiskyState extends State<SelectedWhisky> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              whiskyInfo(context, whisky),
+              CommonWhiskyInfo(whisky: whisky),
               const SizedBox(height: 8),
               Expanded(
                 child: Row(
@@ -55,18 +52,19 @@ class _SelectedWhiskyState extends State<SelectedWhisky> {
                                   : ReviewWidget(initReview: snapshot.data!);
 
                           return Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  width: 2,
-                                  color: Theme.of(context).colorScheme.secondary.withOpacity(.2),
-                                ),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                width: 2,
+                                color: Theme.of(context).colorScheme.secondary.withOpacity(.2),
                               ),
-                              child: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 160),
-                                child: reviewWidget,
-                              ));
+                            ),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 160),
+                              child: reviewWidget,
+                            ),
+                          );
                         },
                       ),
                     ),

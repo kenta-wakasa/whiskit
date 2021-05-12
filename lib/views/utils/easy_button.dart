@@ -12,7 +12,7 @@ class EasyButton extends StatelessWidget {
     this.padding = 0.0,
   });
 
-  final Function()? onPressed;
+  final GestureTapCallback? onPressed;
   final Color? primary;
   final Color? onPrimary;
   final String text;

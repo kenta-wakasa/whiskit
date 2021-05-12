@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:transparent_image/transparent_image.dart';
-import 'package:whiskit/controllers/post_review_controller.dart';
-import 'package:whiskit/controllers/search_controller.dart';
-import 'package:whiskit/controllers/user_controller.dart';
+
 import 'package:whiskit/controllers/whisky_details_controller.dart';
-import 'package:whiskit/controllers/whisky_list_controller.dart';
-import 'package:whiskit/models/review.dart';
-import 'package:whiskit/views/home_page.dart';
 import 'package:whiskit/views/main_page.dart';
-import 'package:whiskit/views/post_review_page.dart';
-import 'package:whiskit/views/review_widget.dart';
-import 'package:whiskit/views/utils/common_widget.dart';
-import 'package:whiskit/views/utils/easy_button.dart';
+import 'package:whiskit/views/utils/common_user_icon.dart';
+import 'package:whiskit/views/utils/common_whisky_image.dart';
+import 'package:whiskit/views/utils/common_whisky_info.dart';
 
 class WhiskyDetailsPage extends ConsumerWidget {
   const WhiskyDetailsPage({Key? key, required this.whiskyId}) : super(key: key);
@@ -46,38 +39,24 @@ class WhiskyDetailsPage extends ConsumerWidget {
             ),
           ],
         ),
-        actions: [
-          InkWell(
-            onTap: () {
-              // サインインしていない
-              if (context.read(userProvider).user == null) {
-                // TODO: sign in をうながすダイアログを出すなど
-
-              }
-              // サインインしている
-              else {
-                Navigator.pushNamed(context, HomePage.route);
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              child: FittedBox(
-                fit: BoxFit.fill,
-                child: Consumer(
-                  builder: (_, watch, __) {
-                    final user = watch(userProvider).user;
-                    if (user == null) {
-                      return const Icon(Icons.account_circle_rounded);
-                    }
-                    return CircleAvatar(foregroundImage: NetworkImage(user.avatarUrl));
-                  },
-                ),
-              ),
-            ),
-          ),
-        ],
+        actions: [CommonUserIcon()],
       ),
-      body: SingleChildScrollView(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(width: double.infinity),
+            SizedBox(
+              height: 200,
+              child: CommonWhiskyImage(imageUrl: whisky.imageUrl),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: 400,
+              child: CommonWhiskyInfo(whisky: whisky, center: true),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

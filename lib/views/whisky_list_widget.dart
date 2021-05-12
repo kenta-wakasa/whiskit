@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:transparent_image/transparent_image.dart';
+
 import 'package:whiskit/controllers/whisky_list_controller.dart';
-import 'package:whiskit/views/utils/common_whisky_imga.dart';
+import 'package:whiskit/views/utils/common_whisky_image.dart';
 
 class WhiskyListWidget extends ConsumerWidget {
   const WhiskyListWidget({Key? key}) : super(key: key);

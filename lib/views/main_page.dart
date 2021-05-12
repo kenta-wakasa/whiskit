@@ -10,7 +10,7 @@ import 'package:whiskit/views/review_widget.dart';
 import 'package:whiskit/views/search_form.dart';
 import 'package:whiskit/views/selected_whisky.dart';
 import 'package:whiskit/views/sing_in_widget.dart';
-import 'package:whiskit/views/user_icon.dart';
+import 'package:whiskit/views/utils/common_user_icon.dart';
 import 'package:whiskit/views/utils/common_widget.dart';
 import 'package:whiskit/views/whisky_details_page.dart';
 import 'package:whiskit/views/whisky_list_widget.dart';
@@ -33,10 +33,7 @@ class MainPage extends StatelessWidget {
               children: [
                 logo(context),
                 const Spacer(flex: 1),
-                Expanded(
-                  flex: 4,
-                  child: SearchForm(),
-                ),
+                Expanded(flex: 4, child: SearchForm()),
                 const Spacer(flex: 1),
               ],
             ),
@@ -44,7 +41,7 @@ class MainPage extends StatelessWidget {
         ),
         actions: [
           PopUpNotificationMenu(),
-          UserIcon(),
+          CommonUserIcon(),
         ],
       ),
       body: Stack(
