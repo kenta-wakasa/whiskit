@@ -182,5 +182,37 @@ class ReviewRepository {
 }
 
 enum HowToDrink { straight, rock, water, soda }
+String howToDrinkText(HowToDrink howToDrink) {
+  switch (howToDrink) {
+    case HowToDrink.rock:
+      return 'ロック';
+    case HowToDrink.soda:
+      return 'ハイボール';
+    case HowToDrink.straight:
+      return 'ストレート';
+    case HowToDrink.water:
+      return '水割り';
+  }
+}
 
 enum Aroma { fruity, malty, smoky, woody, choco, vanilla, nutty, honey }
+String aromaText(Aroma aroma) {
+  switch (aroma) {
+    case Aroma.choco:
+      return 'チョコ';
+    case Aroma.fruity:
+      return 'フルーティ';
+    case Aroma.honey:
+      return 'ハニー';
+    case Aroma.malty:
+      return 'モルティ';
+    case Aroma.nutty:
+      return 'ナッツ';
+    case Aroma.smoky:
+      return 'スモーキー';
+    case Aroma.vanilla:
+      return 'バニラ';
+    case Aroma.woody:
+      return 'ウッディ';
+  }
+}

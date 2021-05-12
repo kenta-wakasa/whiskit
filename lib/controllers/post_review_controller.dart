@@ -81,10 +81,12 @@ class PostReviewController extends ChangeNotifier {
 
     final whiskyUpdateMap = <String, dynamic>{};
 
+    // 飲み方の更新
     for (final drinkKey in drinkKeys) {
       whiskyUpdateMap[drinkKey] = FieldValue.increment(1);
     }
 
+    // アロマの更新
     for (final aromaKey in aromaKeys) {
       whiskyUpdateMap[aromaKey] = FieldValue.increment(1);
     }

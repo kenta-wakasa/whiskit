@@ -12,6 +12,21 @@ class Whisky {
     required this.alcohol,
     required this.country,
     required this.style,
+    required this.water,
+    required this.straight,
+    required this.soda,
+    required this.rock,
+    required this.choco,
+    required this.fruity,
+    required this.honey,
+    required this.malty,
+    required this.nutty,
+    required this.smoky,
+    required this.vanilla,
+    required this.woody,
+    required this.reviewCount,
+    required this.richAverage,
+    required this.sweetAverage,
     required this.ref,
   });
   static Whisky fromDoc(DocumentSnapshot doc) {
@@ -24,6 +39,21 @@ class Whisky {
       alcohol: doc.data()!['alcohol'] as int,
       country: doc.data()!['country'] as String,
       style: doc.data()!['style'] as String,
+      straight: doc.data()!['straight'] as int? ?? 0,
+      rock: doc.data()!['rock'] as int? ?? 0,
+      water: doc.data()!['water'] as int? ?? 0,
+      soda: doc.data()!['soda'] as int? ?? 0,
+      fruity: doc.data()!['fruity'] as int? ?? 0,
+      malty: doc.data()!['malty'] as int? ?? 0,
+      smoky: doc.data()!['smoky'] as int? ?? 0,
+      woody: doc.data()!['woody'] as int? ?? 0,
+      choco: doc.data()!['choco'] as int? ?? 0,
+      vanilla: doc.data()!['vanilla'] as int? ?? 0,
+      nutty: doc.data()!['nutty'] as int? ?? 0,
+      honey: doc.data()!['honey'] as int? ?? 0,
+      sweetAverage: doc.data()!['sweetAverage'] as int? ?? 0,
+      richAverage: doc.data()!['richAverage'] as int? ?? 0,
+      reviewCount: doc.data()!['reviewCount'] as int? ?? 0,
       ref: doc.reference,
     );
   }
@@ -36,6 +66,30 @@ class Whisky {
   final int alcohol;
   final String country;
   final String style;
+  // 飲み方
+  final int straight;
+  final int rock;
+  final int water;
+  final int soda;
+  // 香り
+  final int fruity;
+  final int malty;
+  final int smoky;
+  final int woody;
+  final int choco;
+  final int vanilla;
+  final int nutty;
+  final int honey;
+
+  /// 感想が投稿された数
+  final int reviewCount;
+
+  /// あまさの平均
+  final int richAverage;
+
+  /// 濃厚さの平均
+  final int sweetAverage;
+
   final DocumentReference ref;
 
   Whisky copyWith({
@@ -60,6 +114,21 @@ class Whisky {
       country: country ?? this.country,
       style: style ?? this.style,
       ref: ref ?? this.ref,
+      fruity: fruity,
+      malty: malty,
+      smoky: smoky,
+      woody: woody,
+      choco: choco,
+      vanilla: vanilla,
+      nutty: nutty,
+      honey: honey,
+      rock: rock,
+      soda: soda,
+      straight: straight,
+      water: water,
+      reviewCount: reviewCount,
+      richAverage: richAverage,
+      sweetAverage: sweetAverage,
     );
   }
 }
