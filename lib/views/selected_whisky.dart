@@ -30,77 +30,77 @@ class _SelectedWhiskyState extends State<SelectedWhisky> {
       child: SizedBox(
         height: 300,
         width: 400,
-        child: Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CommonWhiskyInfo(whisky: whisky),
-              const SizedBox(height: 8),
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(flex: 1, child: CommonWhiskyImage(imageUrl: whisky.imageUrl)),
-                    Expanded(
-                      flex: 4,
-                      child: FutureBuilder(
-                        future: ReviewRepository.instance.fetchFirstReview(whiskyId: whisky.ref.id),
-                        builder: (context, AsyncSnapshot<Review> snapshot) {
-                          final reviewWidget = (snapshot.connectionState == ConnectionState.waiting)
-                              ? const SizedBox.expand()
-                              : snapshot.data == null
-                                  ? const Center(child: Text('レビューはまだありません'))
-                                  : ReviewWidget(initReview: snapshot.data!);
-
-                          return Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                width: 2,
-                                color: Theme.of(context).colorScheme.secondary.withOpacity(.2),
-                              ),
-                            ),
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 160),
-                              child: reviewWidget,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CommonWhiskyInfo(whisky: whisky),
+            const SizedBox(height: 16),
+            Expanded(
+              child: Row(
                 children: [
-                  Consumer(builder: (_, watch, __) {
-                    final user = watch(userProvider).user;
-                    watch(postReviewProvider(whisky.ref.id));
-                    return EasyButton(
-                      onPressed: user == null
-                          ? null
-                          : () async {
-                              await Navigator.pushNamed(
-                                context,
-                                '${PostReviewPage.route}/${whisky.ref.id}',
-                              );
-                              setState(() {});
-                            },
-                      primary: Colors.white,
-                      onPrimary: Theme.of(context).scaffoldBackgroundColor,
-                      text: '感想を書く',
-                    );
-                  }),
-                  const Spacer(),
-                  rakutenButton(whisky),
-                  const SizedBox(width: 8),
-                  amazonButton(whisky),
+                  Expanded(flex: 1, child: CommonWhiskyImage(imageUrl: whisky.imageUrl)),
+                  Expanded(
+                    flex: 4,
+                    child: FutureBuilder(
+                      future: ReviewRepository.instance.fetchFirstReviewByWhisky(whiskyId: whisky.ref.id),
+                      builder: (context, AsyncSnapshot<Review> snapshot) {
+                        final reviewWidget = (snapshot.connectionState == ConnectionState.waiting)
+                            ? const SizedBox.expand()
+                            : snapshot.data == null
+                                ? const Center(child: Text('レビューはまだありません'))
+                                : ReviewWidget(initReview: snapshot.data!);
+
+                        return Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              width: 2,
+                              color: Theme.of(context).colorScheme.secondary.withOpacity(.2),
+                            ),
+                          ),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 160),
+                            child: reviewWidget,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Consumer(builder: (_, watch, __) {
+                  final user = watch(userProvider).user;
+                  watch(postReviewProvider(whisky.ref.id));
+                  return EasyButton(
+                    onPressed: user == null
+                        ? null
+                        : () async {
+                            final ret = await Navigator.pushNamed(
+                              context,
+                              '${PostReviewPage.route}/${whisky.ref.id}',
+                            );
+                            if (ret == true) {
+                              setState(() {});
+                            }
+                          },
+                    primary: Colors.white,
+                    onPrimary: Theme.of(context).scaffoldBackgroundColor,
+                    text: '感想を書く',
+                  );
+                }),
+                const Spacer(),
+                rakutenButton(whisky),
+                const SizedBox(width: 8),
+                amazonButton(whisky),
+              ],          
+            ),      
+          ],
         ),
       ),
     );

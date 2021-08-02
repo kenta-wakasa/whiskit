@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:whiskit/controllers/post_review_controller.dart';
+import 'package:whiskit/controllers/review_controller.dart';
 import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/models/review.dart';
 import 'package:whiskit/views/utils/common_widget.dart';
@@ -56,7 +57,7 @@ class PostReviewPage extends ConsumerWidget {
                           },
                         ),
                       );
-                      await controller.postReview(user: context.read(userProvider).user!);
+                      final review = await controller.postReview(user: context.read(userProvider).user!);
                       Navigator.of(context).pop();
                       await showDialog<void>(
                         context: context,
@@ -72,7 +73,10 @@ class PostReviewPage extends ConsumerWidget {
                           );
                         },
                       );
-                      Navigator.of(context).pop();
+                      if (review != null) {
+                        await context.read(reviewProvider(review)).refresh();
+                      }
+                      Navigator.of(context).pop<bool>(true);
                     },
               text: '投稿',
             ),

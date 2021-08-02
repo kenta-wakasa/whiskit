@@ -24,7 +24,7 @@ class EasyButton extends StatelessWidget {
       padding: EdgeInsets.all(padding),
       child: SizedBox(
         height: 24,
-        width: 80,
+        width: 88,
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(

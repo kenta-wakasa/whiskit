@@ -53,11 +53,7 @@ class ReviewWidget extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  Expanded(
-                    child: Text(
-                      review.content,
-                    ),
-                  ),
+                  Expanded(child: Text(review.content)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [

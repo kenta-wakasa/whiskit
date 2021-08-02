@@ -72,6 +72,7 @@ class MainPage extends StatelessWidget {
                       child: SelectedWhisky(whisky: selectedWhisky),
                     );
                   }),
+                  const SizedBox(height: 16),
 
                   const WhiskyListWidget(key: ValueKey('WhiskyList')),
                   FutureBuilder(
@@ -115,6 +116,7 @@ class MainPage extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 16),
           Consumer(
             builder: (_, watch, __) {
               final controller = watch(searchProvider);

@@ -7,7 +7,6 @@ import 'package:whiskit/models/user.dart';
 import 'package:whiskit/models/whisky.dart';
 import 'package:whiskit/models/whisky_log.dart';
 
-
 final postReviewProvider = ChangeNotifierProvider.autoDispose.family(
   (ref, String whiskyId) => PostReviewController._(whiskyId, ref.read(userProvider).user),
 );
@@ -57,9 +56,9 @@ class PostReviewController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> postReview({required User user}) async {
+  Future<Review?> postReview({required User user}) async {
     if (!validate) {
-      return;
+      return null;
     }
 
     final ref = ReviewRepository.instance.docRef(whiskyId: whiskyId, userId: user.ref.id);
@@ -178,6 +177,7 @@ class PostReviewController extends ChangeNotifier {
         'richAverage': newRichAverage,
       },
     );
+    return review;
   }
 
   void updateTitle(String value) {

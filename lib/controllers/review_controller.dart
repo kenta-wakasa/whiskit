@@ -31,6 +31,11 @@ class ReviewController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> refresh() async {
+    review = await Review.fromDoc(await review.ref.get());
+    notifyListeners();
+  }
+
   void changeFavorite() {
     if (user == null) {
       print('required log in');

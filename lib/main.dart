@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/models/review.dart';
 import 'package:whiskit/utils/hex_color.dart';
 import 'package:whiskit/views/home_page.dart';
@@ -31,10 +32,11 @@ Future<void> main() async {
   runApp(ProviderScope(child: Main()));
 }
 
-class Main extends StatelessWidget {
+class Main extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ScopedReader watch) {
     final backgroundColor = HexColor('000028');
+    watch(userProvider);
     final baseTheme = ThemeData(
       brightness: Brightness.dark,
       scaffoldBackgroundColor: backgroundColor,
@@ -42,11 +44,6 @@ class Main extends StatelessWidget {
         backgroundColor: backgroundColor,
         elevation: 0,
       ),
-      textTheme: GoogleFonts.latoTextTheme(const TextTheme(
-        bodyText1: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        headline5: TextStyle(fontWeight: FontWeight.bold),
-        headline6: TextStyle(fontWeight: FontWeight.bold),
-      )),
       dividerTheme: const DividerThemeData(thickness: .5, color: Colors.white),
       primarySwatch: Colors.blue,
     );
@@ -54,6 +51,14 @@ class Main extends StatelessWidget {
       title: 'WHISKIT｜ウィスキー選びをもっとおもしろく',
       theme: baseTheme.copyWith(
         colorScheme: baseTheme.colorScheme.copyWith(secondary: Colors.blue),
+        textTheme: GoogleFonts.notoSansTextTheme(
+          baseTheme.textTheme.copyWith(
+            bodyText1: baseTheme.textTheme.bodyText1!.copyWith(fontSize: 18),
+            bodyText2: baseTheme.textTheme.bodyText2!.copyWith(fontSize: 14),
+            headline5: baseTheme.textTheme.headline6!.copyWith(fontWeight: FontWeight.bold, fontSize: 24),
+            headline6: baseTheme.textTheme.headline6!.copyWith(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+        ),
       ),
       initialRoute: MainPage.route,
 
@@ -118,7 +123,11 @@ class NoAnimationMaterialPageRoute<T> extends MaterialPageRoute<T> {
 
   @override
   Widget buildTransitions(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return child;
   }
 }

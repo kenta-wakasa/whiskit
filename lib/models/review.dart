@@ -140,14 +140,20 @@ class ReviewRepository {
 
   /// レビューの一覧を取得する
   Future<List<Review>> fetchReviewList({required String whiskyId}) async {
-    final querySnapshot = await collectionRef(whiskyId: whiskyId).get();
+    final querySnapshot = await collectionRef(whiskyId: whiskyId).limit(10).get();
     return Future.wait(querySnapshot.docs.map(Review.fromDoc).toList());
   }
 
   /// 最新一件を取得する
-  Future<Review> fetchFirstReview({required String whiskyId}) async {
+  Future<Review> fetchFirstReviewByWhisky({required String whiskyId}) async {
     final querySnapshot = await collectionRef(whiskyId: whiskyId).orderBy('createdAt', descending: true).limit(1).get();
     return Review.fromDoc(querySnapshot.docs.first);
+  }
+
+  /// 荒らしい順に全件を取得する
+  Future<List<Review>> fetchReviewByWhiskyId({required String whiskyId}) async {
+    final querySnapshot = await collectionRef(whiskyId: whiskyId).orderBy('createdAt', descending: true).get();
+    return Future.wait(querySnapshot.docs.map(Review.fromDoc).toList());
   }
 
   /// [whiskyId] と [userId] からレビューを取得する
