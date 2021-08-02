@@ -51,8 +51,8 @@ class Whisky {
       vanilla: doc.data()!['vanilla'] as int? ?? 0,
       nutty: doc.data()!['nutty'] as int? ?? 0,
       honey: doc.data()!['honey'] as int? ?? 0,
-      sweetAverage: doc.data()!['sweetAverage'] as int? ?? 0,
-      richAverage: doc.data()!['richAverage'] as int? ?? 0,
+      sweetAverage: doc.data()!['sweetAverage'] as double? ?? 0,
+      richAverage: doc.data()!['richAverage'] as double? ?? 0,
       reviewCount: doc.data()!['reviewCount'] as int? ?? 0,
       ref: doc.reference,
     );
@@ -85,10 +85,10 @@ class Whisky {
   final int reviewCount;
 
   /// あまさの平均
-  final int richAverage;
+  final double richAverage;
 
   /// 濃厚さの平均
-  final int sweetAverage;
+  final double sweetAverage;
 
   final DocumentReference ref;
 
