@@ -120,35 +120,40 @@ class MainPage extends StatelessWidget {
           Consumer(
             builder: (_, watch, __) {
               final controller = watch(searchProvider);
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ...controller.resultWhiskyList.map(
-                    (whisky) {
-                      return InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '${WhiskyDetailsPage.route}/${whisky.ref.id}',
+              return SizedBox(
+                height: 320,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ...controller.resultWhiskyList.map(
+                        (whisky) {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '${WhiskyDetailsPage.route}/${whisky.ref.id}',
+                              );
+                            },
+                            child: Container(
+                              alignment: Alignment.centerLeft,
+                              padding: const EdgeInsets.all(4),
+                              color: Colors.white.withOpacity(.9),
+                              width: 240,
+                              height: 32,
+                              child: Text(
+                                whisky.name,
+                                style: const TextStyle(color: Colors.black),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           );
                         },
-                        child: Container(
-                          alignment: Alignment.centerLeft,
-                          padding: const EdgeInsets.all(4),
-                          color: Colors.white.withOpacity(.9),
-                          width: 240,
-                          height: 32,
-                          child: Text(
-                            whisky.name,
-                            style: const TextStyle(color: Colors.black),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      );
-                    },
-                  ).toList()
-                ],
+                      ).toList()
+                    ],
+                  ),
+                ),
               );
             },
           ),

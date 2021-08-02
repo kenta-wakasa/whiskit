@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:whiskit/controllers/whisky_details_controller.dart';
 import 'package:whiskit/views/main_page.dart';
-import 'package:whiskit/views/post_review_page.dart';
 import 'package:whiskit/views/review_widget.dart';
 import 'package:whiskit/views/utils/common_post_review_button.dart';
 import 'package:whiskit/views/utils/common_user_icon.dart';

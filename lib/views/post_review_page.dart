@@ -5,6 +5,8 @@ import 'package:whiskit/controllers/post_review_controller.dart';
 import 'package:whiskit/controllers/review_controller.dart';
 import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/models/review.dart';
+import 'package:whiskit/views/utils/common_whisky_image.dart';
+import 'package:whiskit/views/utils/common_whisky_info.dart';
 import 'package:whiskit/views/utils/common_widget.dart';
 import 'package:whiskit/views/utils/easy_button.dart';
 
@@ -17,6 +19,7 @@ class PostReviewPage extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     final textTheme = Theme.of(context).textTheme;
     final controller = watch(postReviewProvider(whiskyId));
+    final whisky = controller.whisky;
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 8,
@@ -93,6 +96,22 @@ class PostReviewPage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (whisky != null)
+                    Column(
+                      children: [
+                        const SizedBox(height: 16, width: double.infinity),
+                        SizedBox(
+                          height: 200,
+                          child: CommonWhiskyImage(imageUrl: whisky.imageUrl),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: 400,
+                          child: CommonWhiskyInfo(whisky: whisky, center: true),
+                        ),
+                        const SizedBox(height: 48),
+                      ],
+                    ),
                   const SizedBox(width: double.infinity),
                   Row(
                     children: [

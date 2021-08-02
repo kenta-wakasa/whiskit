@@ -80,10 +80,11 @@ class UserController extends ChangeNotifier {
 
   /// 新着の通知を取得する
   Future<List<UserNotification>> fetchLatestNotification() async {
+    final user = this.user;
     if (user == null) {
       return <UserNotification>[];
     }
-    final snapshot = await user!.ref
+    final snapshot = await user.ref
         .collection('UserNotification')
         .orderBy(
           'createdAt',

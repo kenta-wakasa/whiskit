@@ -80,7 +80,7 @@ class Main extends ConsumerWidget {
           final reviewRef = ReviewRepository.instance.collectionRef(whiskyId: whiskyId).doc(reviewId);
           return NoAnimationMaterialPageRoute<void>(
             settings: settings,
-            builder: (context) => ReviewDetailsPage(reviewRef: reviewRef),
+            builder: (context) => ReviewDetailsPage(reviewRef: reviewRef, whiskyId: whiskyId),
           );
         }
 

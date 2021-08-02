@@ -150,7 +150,7 @@ class ReviewRepository {
     return Review.fromDoc(querySnapshot.docs.first);
   }
 
-  /// 荒らしい順に全件を取得する
+  /// 新しい順に全件を取得する
   Future<List<Review>> fetchReviewByWhiskyId({required String whiskyId}) async {
     final querySnapshot = await collectionRef(whiskyId: whiskyId).orderBy('createdAt', descending: true).get();
     return Future.wait(querySnapshot.docs.map(Review.fromDoc).toList());

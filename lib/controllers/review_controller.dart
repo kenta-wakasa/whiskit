@@ -5,9 +5,9 @@ import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/models/review.dart';
 import 'package:whiskit/models/user.dart';
 
-final reviewProvider = ChangeNotifierProvider.autoDispose.family(
+final reviewProvider = ChangeNotifierProvider.family(
   (ref, Review review) {
-    final user = ref.read(userProvider).user;
+    final user = ref.watch(userProvider).user;
     return ReviewController._(review: review, user: user);
   },
 );
@@ -22,11 +22,12 @@ class ReviewController extends ChangeNotifier {
   final User? user;
 
   Future<void> init() async {
+    final user = this.user;
     if (user == null) {
       exitsFavorite = false;
       return;
     }
-    final doc = await review.ref.collection('FavoriteReview').doc(user!.ref.id).get();
+    final doc = await review.ref.collection('FavoriteReview').doc(user.ref.id).get();
     exitsFavorite = doc.exists;
     notifyListeners();
   }
@@ -37,12 +38,13 @@ class ReviewController extends ChangeNotifier {
   }
 
   void changeFavorite() {
+    final user = this.user;
     if (user == null) {
       print('required log in');
       return;
     }
 
-    final uid = user!.ref.id;
+    final uid = user.ref.id;
     final favoriteReviewRef = review.ref.collection('FavoriteReview').doc(uid);
 
     // お気に入りを削除する
@@ -72,7 +74,7 @@ class ReviewController extends ChangeNotifier {
       final notificationId = review.ref.parent.parent!.id + review.ref.id + uid;
       // 通知を飛ばす
       review.user.ref.collection('UserNotification').doc(notificationId).set(<String, dynamic>{
-        'userRef': user!.ref,
+        'userRef': user.ref,
         'reviewRef': review.ref,
         'createdAt': Timestamp.now(),
       });

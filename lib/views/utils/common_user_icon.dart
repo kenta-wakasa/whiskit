@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whiskit/controllers/user_controller.dart';
 import 'package:whiskit/views/home_page.dart';
+import 'package:whiskit/views/sing_in_widget.dart';
 
 class CommonUserIcon extends ConsumerWidget {
   @override
@@ -9,14 +10,22 @@ class CommonUserIcon extends ConsumerWidget {
     final controller = watch(userProvider);
     final user = controller.user;
     return InkWell(
-      onTap: () {
+      onTap: () async {
         // サインインしていない
         if (controller.user == null) {
-          // TODO: sign in をうながすダイアログを出すなど
+          await showDialog<void>(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                content: SignInWidget(),
+              );
+            },
+          );
+
           return;
         }
         // サインインしている
-        Navigator.pushNamed(context, HomePage.route);
+        await Navigator.pushNamed(context, HomePage.route);
       },
       child: Container(
         padding: const EdgeInsets.all(8),

@@ -9,6 +9,7 @@ import 'package:whiskit/views/main_page.dart';
 import 'package:whiskit/views/review_details_page.dart';
 import 'package:whiskit/views/utils/common_whisky_image.dart';
 import 'package:path/path.dart' as p;
+import 'package:whiskit/views/utils/common_widget.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class HomePage extends ConsumerWidget {
           children: [
             InkWell(
               onTap: () => Navigator.pushNamed(context, MainPage.route),
-              child: Text('WHISKIT', style: textTheme.headline5),
+              child: logo(context),
             )
           ],
         ),
